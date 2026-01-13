@@ -537,6 +537,79 @@ class Game {
                 this.leaderboardScreen.classList.remove('active');
             });
         }
+
+        // Wallet Address Copy Functionality
+        const copyWalletBtn = document.getElementById('copy-wallet');
+        const walletText = document.getElementById('wallet-text');
+
+        if (copyWalletBtn && walletText) {
+            copyWalletBtn.addEventListener('click', async () => {
+                const address = walletText.textContent;
+
+                try {
+                    // 使用 Clipboard API 複製
+                    await navigator.clipboard.writeText(address);
+
+                    // 顯示成功提示
+                    this.showCopyNotification('✅ 地址已複製到剪貼簿!', 'success');
+                } catch (err) {
+                    // 降級方案:使用舊方法
+                    const textArea = document.createElement('textarea');
+                    textArea.value = address;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.select();
+
+                    try {
+                        document.execCommand('copy');
+                        this.showCopyNotification('✅ 地址已複製到剪貼簿!', 'success');
+                    } catch (err2) {
+                        this.showCopyNotification('❌ 複製失敗,請手動複製', 'error');
+                    }
+
+                    document.body.removeChild(textArea);
+                }
+            });
+        }
+    }
+
+    showCopyNotification(message, type = 'success') {
+        // 移除舊的通知
+        const existingNotification = document.querySelector('.copy-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // 建立新通知
+        const notification = document.createElement('div');
+        notification.className = `copy-notification ${type}`;
+        notification.textContent = message;
+
+        // 添加樣式
+        notification.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: ${type === 'success' ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'};
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: copyNotificationFadeIn 0.3s ease-out;
+        `;
+
+        document.body.appendChild(notification);
+
+        // 2秒後移除
+        setTimeout(() => {
+            notification.style.animation = 'copyNotificationFadeOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 2000);
     }
 
     renderPokedex() {

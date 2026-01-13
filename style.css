@@ -1068,3 +1068,36 @@ canvas {
 .meowth-timer.hidden {
     display: none;
 }
+
+/* Copy Notification Animations */
+@keyframes copyNotificationFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes copyNotificationFadeOut {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+/* Wallet Address Hover Effect */
+.wallet-address:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
