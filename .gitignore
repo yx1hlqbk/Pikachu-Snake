@@ -1,0 +1,35 @@
+# Python 虛擬環境
+.venv/
+venv/
+env/
+ENV/
+
+# Python 編譯檔案
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 資料庫檔案
+*.db
+*.sqlite
+*.sqlite3
+
+# 作業系統檔案
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE 設定檔
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日誌檔案
+*.log
+
+# 暫存檔案
+*.tmp
+*.temp
