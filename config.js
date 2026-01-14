@@ -27,9 +27,10 @@ const GAME_CONFIG = {
 
     // 敵人系統（喵喵）
     enemy: {
-        spawnScore: 100,        // 敵人出現所需分數
-        penaltyScore: 50,       // 碰撞扣分
+        spawnScore: 10,        // 敵人出現所需分數
+        penaltyScore: 10,       // 碰撞扣分
         respawnCooldown: 10000, // 復活冷卻時間（毫秒，10秒）
+        spawnCountdown: 5000,   // 出現倒數時間(毫秒,5秒)
         moveSpeed: 150,         // 移動間隔（毫秒）
         minSpawnDistance: 10    // 生成時與玩家的最小距離（格子數）
     },

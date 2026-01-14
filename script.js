@@ -12,21 +12,28 @@ class EnemySnake {
         this.accumulatedTime = 0;
     }
 
-    spawn(playerSnake, tileCount) {
+    spawn(playerSnake, tileCount, presetPosition = null) {
         this.body = [];
-        let validPosition = false;
         let startX, startY;
 
-        while (!validPosition) {
-            startX = Math.floor(Math.random() * tileCount);
-            startY = Math.floor(Math.random() * tileCount);
+        if (presetPosition) {
+            // Use preset position
+            startX = presetPosition.x;
+            startY = presetPosition.y;
+        } else {
+            // Random position with distance check
+            let validPosition = false;
+            while (!validPosition) {
+                startX = Math.floor(Math.random() * tileCount);
+                startY = Math.floor(Math.random() * tileCount);
 
-            // Ensure far enough from player head
-            if (playerSnake.length > 0) {
-                const dist = Math.abs(startX - playerSnake[0].x) + Math.abs(startY - playerSnake[0].y);
-                if (dist > GAME_CONFIG.enemy.minSpawnDistance) validPosition = true;
-            } else {
-                validPosition = true;
+                // Ensure far enough from player head
+                if (playerSnake.length > 0) {
+                    const dist = Math.abs(startX - playerSnake[0].x) + Math.abs(startY - playerSnake[0].y);
+                    if (dist > GAME_CONFIG.enemy.minSpawnDistance) validPosition = true;
+                } else {
+                    validPosition = true;
+                }
             }
         }
 
@@ -236,6 +243,8 @@ class Game {
         this.leaderboardScreen = document.getElementById('leaderboard-screen');
         // Duplicate assignment removed
         this.pokedexSection = document.querySelector('.pokedex-section');
+        this.pokedexTabs = document.getElementById('pokedex-tabs');
+        this.currentCategory = 'all'; // 預設顯示全部
         this.marqueeContainer = document.getElementById('marquee-container');
         this.marqueeText = document.getElementById('marquee-text');
         this.recordBrokenTriggered = false;
@@ -243,6 +252,16 @@ class Game {
         // Meowth Timer Elements
         this.meowthTimerEl = document.getElementById('meowth-timer');
         this.meowthCountdownEl = document.getElementById('meowth-countdown');
+        this.meowthRespawnLocationEl = document.getElementById('meowth-respawn-location');
+
+        // Meowth Spawn Alert Elements
+        this.meowthSpawnAlertEl = document.getElementById('meowth-spawn-alert');
+        this.meowthSpawnCountdownEl = document.getElementById('meowth-spawn-countdown');
+        this.meowthSpawnLocationEl = document.getElementById('meowth-spawn-location');
+
+        // Meowth Spawn State
+        this.meowthSpawnTimer = 0;
+        this.meowthSpawnPosition = null;
 
         this.initEventListeners();
         this.updateHighScoreUI();
@@ -305,6 +324,10 @@ class Game {
         // Hide pokedex section buttons during countdown
         if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
 
+        // Hide all meowth timers during countdown
+        if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
+        if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
+
         let count = 3;
         countdownNumber.textContent = count;
         countdownScreen.classList.remove('hidden');
@@ -333,6 +356,14 @@ class Game {
         // Hide game over screen
         this.gameOverScreen.classList.add('hidden');
         this.gameOverScreen.classList.remove('active');
+
+        // Reset score immediately before showing countdown
+        this.#score = 0;
+        this.updateScoreUI();
+
+        // Hide all meowth timers before countdown
+        if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
+        if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
 
         // Show countdown
         this.showCountdown();
@@ -364,6 +395,8 @@ class Game {
         this.particles = [];
         this.enemy.active = false;
         this.enemyCooldown = 0;
+        this.meowthSpawnTimer = 0;
+        this.meowthSpawnPosition = null;
         this.updateScoreUI();
         this.spawnFood();
         this.isRunning = true;
@@ -377,8 +410,9 @@ class Game {
         if (this.marqueeContainer) this.marqueeContainer.classList.add('hidden');
         this.recordBrokenTriggered = false;
 
-        // Reset Meowth Timer
+        // Reset Meowth Timers
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
+        if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
 
         // Hide buttons during game
         if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
@@ -401,8 +435,9 @@ class Game {
         this.updateScoreUI();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Hide Meowth Timer on Home Return
+        // Hide Meowth Timers on Home Return
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
+        if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
     }
 
     initEventListeners() {
@@ -424,6 +459,7 @@ class Game {
 
         // Device Detection and Instructions
         this.updateInstructions();
+        this.renderInstructionsList();
         window.addEventListener('resize', () => this.updateInstructions());
 
         // Mobile Controls
@@ -473,6 +509,7 @@ class Game {
         // Helper to close all views
         const closeAllViews = () => {
             if (pokedexGrid) pokedexGrid.classList.add('hidden');
+            if (this.pokedexTabs) this.pokedexTabs.classList.add('hidden');
             if (changelogScreen) {
                 changelogScreen.classList.add('hidden');
                 changelogScreen.classList.remove('active');
@@ -493,9 +530,28 @@ class Game {
 
                 if (isHidden) {
                     pokedexGrid.classList.remove('hidden');
-                    this.renderPokedex();
+                    if (this.pokedexTabs) this.pokedexTabs.classList.remove('hidden');
+                    this.renderPokedex(this.currentCategory);
                     setTimeout(() => pokedexGrid.scrollIntoView({ behavior: 'smooth' }), 100);
                 }
+            });
+        }
+
+        // Pokedex Tabs
+        if (this.pokedexTabs) {
+            const tabButtons = this.pokedexTabs.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // 移除所有 active 狀態
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    // 添加當前按鈕的 active 狀態
+                    button.classList.add('active');
+
+                    // 獲取分類並重新渲染
+                    const category = button.dataset.category;
+                    this.currentCategory = category;
+                    this.renderPokedex(category);
+                });
             });
         }
 
@@ -612,9 +668,12 @@ class Game {
         }, 2000);
     }
 
-    renderPokedex() {
+    renderPokedex(category = 'all') {
         const grid = document.getElementById('pokedex-grid');
-        if (!grid || grid.children.length > 0) return; // Render once
+        if (!grid) return;
+
+        // 清空現有內容以支援重新渲染
+        grid.innerHTML = '';
 
         const createCard = (img, isLegendary) => {
             const card = document.createElement('div');
@@ -634,15 +693,18 @@ class Game {
             return card;
         };
 
-        // 1. Render Normal Pokemon
-        this.pokemonSprites.forEach(img => {
-            grid.appendChild(createCard(img, false));
-        });
+        // 根據分類渲染
+        if (category === 'all' || category === 'starters') {
+            this.pokemonSprites.forEach(img => {
+                grid.appendChild(createCard(img, false));
+            });
+        }
 
-        // 2. Render Legendary Pokemon
-        this.legendaryImages.forEach(img => {
-            grid.appendChild(createCard(img, true));
-        });
+        if (category === 'all' || category === 'legendaries') {
+            this.legendaryImages.forEach(img => {
+                grid.appendChild(createCard(img, true));
+            });
+        }
     }
 
     isMobile() {
@@ -662,6 +724,21 @@ class Game {
                 if (gestureHintEl) gestureHintEl.classList.add('hidden');
             }
         }
+    }
+
+    renderInstructionsList() {
+        const list = document.getElementById('instructions-list');
+        if (!list) return;
+
+        list.innerHTML = `
+            <p>🎮 使用方向鍵或滑動螢幕控制皮卡丘移動</p>
+            <p>🍎 吃普通寶可夢得 <span class="highlight">${GAME_CONFIG.scoring.normalFood} 分</span></p>
+            <p>⭐ 每 ${GAME_CONFIG.scoring.legendarySpawnScore} 分出現傳說寶可夢，吃掉得 <span class="highlight">${GAME_CONFIG.scoring.legendaryFood} 分</span></p>
+            <p>😼 達到 ${GAME_CONFIG.enemy.spawnScore} 分後，喵喵會出現追擊你！</p>
+            <p>⚠️ 喵喵碰到皮卡丘的<span class="highlight-danger">頭部</span>會扣 <span class="highlight-danger">${GAME_CONFIG.enemy.penaltyScore}
+                    分</span></p>
+            <p>💡 用身體擋住喵喵不會扣分，只有頭對頭才會！</p>
+        `;
     }
 
     handleInput(e) {
@@ -721,31 +798,176 @@ class Game {
         }
     }
 
+    calculateEnemySpawnPosition() {
+        // Calculate a random spawn position far from player
+        let validPosition = false;
+        let startX, startY;
+
+        while (!validPosition) {
+            startX = Math.floor(Math.random() * this.tileCount);
+            startY = Math.floor(Math.random() * this.tileCount);
+
+            // Ensure far enough from player head
+            if (this.snake.length > 0) {
+                const dist = Math.abs(startX - this.snake[0].x) + Math.abs(startY - this.snake[0].y);
+                if (dist > GAME_CONFIG.enemy.minSpawnDistance) validPosition = true;
+            } else {
+                validPosition = true;
+            }
+        }
+
+        return { x: startX, y: startY };
+    }
+
+    getPositionDescription(x, y) {
+        // Convert coordinates to region description
+        const thirdX = this.tileCount / 3;
+        const thirdY = this.tileCount / 3;
+
+        let horizontal = '';
+        let vertical = '';
+
+        // Determine horizontal position
+        if (x < thirdX) {
+            horizontal = '左';
+        } else if (x < thirdX * 2) {
+            horizontal = '中';
+        } else {
+            horizontal = '右';
+        }
+
+        // Determine vertical position
+        if (y < thirdY) {
+            vertical = '上';
+        } else if (y < thirdY * 2) {
+            vertical = '央';
+        } else {
+            vertical = '下';
+        }
+
+        // Combine to create region description
+        if (horizontal === '中' && vertical === '央') {
+            return '中央區域';
+        } else if (horizontal === '中') {
+            return vertical === '上' ? '上方區域' : '下方區域';
+        } else if (vertical === '央') {
+            return horizontal === '左' ? '左側區域' : '右側區域';
+        } else {
+            return horizontal + vertical + '區域';
+        }
+    }
+
     update(deltaTime) {
         this.particles.forEach((p, index) => {
             p.update();
             if (p.life <= 0) this.particles.splice(index, 1);
         });
 
+        if (!this.isRunning) return;
+
+        // --- Enemy Logic Start ---
         // --- Enemy Logic Start ---
         if (this.enemyCooldown > 0) {
             this.enemyCooldown -= deltaTime;
 
-            // Show and update Timer
-            if (this.meowthTimerEl && this.meowthCountdownEl) {
-                this.meowthTimerEl.classList.remove('hidden');
-                this.meowthCountdownEl.innerText = Math.ceil(this.enemyCooldown / 1000);
+            // Show and update Timer with location (Using same UI as initial spawn)
+            if (this.meowthSpawnAlertEl && this.meowthSpawnCountdownEl) {
+                this.meowthSpawnAlertEl.classList.remove('hidden');
+                this.meowthSpawnCountdownEl.innerText = Math.ceil(this.enemyCooldown / 1000);
+
+                // Update location display if position is calculated
+                if (this.meowthSpawnLocationEl && this.meowthSpawnPosition) {
+                    const locationDesc = this.getPositionDescription(
+                        this.meowthSpawnPosition.x,
+                        this.meowthSpawnPosition.y
+                    );
+                    this.meowthSpawnLocationEl.innerText = locationDesc;
+                }
+            }
+
+            // When cooldown ends, spawn enemy directly (no additional countdown)
+            if (this.enemyCooldown <= 0) {
+                if (this.meowthSpawnPosition) {
+                    this.enemy.spawn(this.snake, this.tileCount, this.meowthSpawnPosition);
+                } else {
+                    this.enemy.spawn(this.snake, this.tileCount);
+                }
+
+                // Hide timer
+                if (this.meowthSpawnAlertEl) {
+                    this.meowthSpawnAlertEl.classList.add('hidden');
+                }
+
+                // Reset spawn state
+                this.meowthSpawnPosition = null;
             }
         } else {
-            // Hide Timer
+            // Hide Timer (Use spawn alert element)
+            // Note: We don't forcefully hide here every frame because it might be used by the other spawn logic below.
+            // The other logic handles its own visibility.
+            // However, to be safe from "red timer" logic:
             if (this.meowthTimerEl) {
                 this.meowthTimerEl.classList.add('hidden');
             }
         }
 
         // Spawn Enemy condition: Score >= 100, not active, cooldown over
+        // This only triggers for FIRST spawn (not after collision)
         if (this.#score >= GAME_CONFIG.enemy.spawnScore && !this.enemy.active && this.enemyCooldown <= 0) {
-            this.enemy.spawn(this.snake, this.tileCount);
+
+            // If countdown is running, continue it
+            if (this.meowthSpawnTimer > 0) {
+                // Countdown in progress
+                this.meowthSpawnTimer -= deltaTime;
+
+                // Update spawn alert UI
+                if (this.meowthSpawnAlertEl && this.meowthSpawnCountdownEl) {
+                    this.meowthSpawnAlertEl.classList.remove('hidden');
+                    this.meowthSpawnCountdownEl.innerText = Math.ceil(this.meowthSpawnTimer / 1000);
+                }
+
+                // Check if countdown finished
+                if (this.meowthSpawnTimer <= 0) {
+                    // Spawn enemy at pre-calculated position
+                    if (this.meowthSpawnPosition) {
+                        this.enemy.spawn(this.snake, this.tileCount, this.meowthSpawnPosition);
+                    } else {
+                        this.enemy.spawn(this.snake, this.tileCount);
+                    }
+
+                    // Hide spawn alert
+                    if (this.meowthSpawnAlertEl) {
+                        this.meowthSpawnAlertEl.classList.add('hidden');
+                    }
+
+                    // Reset spawn state
+                    this.meowthSpawnTimer = 0;
+                    this.meowthSpawnPosition = null;
+                }
+            }
+            // If countdown is not running and we don't have a position set (meaning we haven't just finished spawning), start it
+            else if (this.meowthSpawnPosition === null) {
+                // Start spawn countdown
+                this.meowthSpawnTimer = GAME_CONFIG.enemy.spawnCountdown;
+
+                // Pre-calculate spawn position
+                this.meowthSpawnPosition = this.calculateEnemySpawnPosition();
+
+                // Update location display
+                if (this.meowthSpawnLocationEl) {
+                    const locationDesc = this.getPositionDescription(
+                        this.meowthSpawnPosition.x,
+                        this.meowthSpawnPosition.y
+                    );
+                    this.meowthSpawnLocationEl.innerText = locationDesc;
+                }
+            }
+        } else {
+            // Hide spawn alert if conditions not met
+            // BUT only if we are not in the middle of a cooldown countdown (which handles its own visibility)
+            if (this.meowthSpawnAlertEl && this.enemyCooldown <= 0) {
+                this.meowthSpawnAlertEl.classList.add('hidden');
+            }
         }
 
         // Update Enemy & Check Collision
@@ -758,8 +980,8 @@ class Game {
             // Check 1: Player Head hits Enemy Body
             const hitEnemy = this.enemy.body.some(part => part.x === playerHead.x && part.y === playerHead.y);
 
-            // Check 2: Enemy Head hits Player Body
-            const hitPlayer = this.snake.some(part => part.x === enemyHead.x && part.y === enemyHead.y);
+            // Check 2: Enemy Head hits Player Body (excluding player head)
+            const hitPlayer = this.snake.slice(1).some(part => part.x === enemyHead.x && part.y === enemyHead.y);
 
             if (hitEnemy || hitPlayer) {
                 this.#score = Math.max(0, this.#score - GAME_CONFIG.enemy.penaltyScore);
@@ -771,6 +993,9 @@ class Game {
                 // Reset Enemy
                 this.enemy.active = false;
                 this.enemyCooldown = GAME_CONFIG.enemy.respawnCooldown; // Cooldown from config
+
+                // Pre-calculate next spawn position for display during cooldown
+                this.meowthSpawnPosition = this.calculateEnemySpawnPosition();
             }
         }
         // --- Enemy Logic End ---
@@ -958,8 +1183,9 @@ class Game {
         this.gameOverScreen.classList.remove('hidden');
         this.gameOverScreen.classList.add('active');
 
-        // Hide Meowth Timer on Game Over
+        // Hide Meowth Timers on Game Over
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
+        if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
 
         // Show buttons again
         if (this.pokedexSection) this.pokedexSection.classList.remove('hidden');

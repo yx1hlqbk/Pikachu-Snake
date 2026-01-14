@@ -29,7 +29,10 @@
             </div>
         </header>
         <div id="meowth-timer" class="meowth-timer hidden">
-            喵喵復活: <span id="meowth-countdown">0</span>秒
+            喵喵復活: <span id="meowth-countdown">0</span>秒 | 將出現於<span id="meowth-respawn-location">中央區域</span>
+        </div>
+        <div id="meowth-spawn-alert" class="meowth-spawn-alert hidden">
+            ⚠️ 喵喵將在 <span id="meowth-spawn-countdown">5</span> 秒後出現於<span id="meowth-spawn-location">中央區域</span>!
         </div>
 
         <div class="canvas-wrapper blur-panel">
@@ -54,14 +57,8 @@
             <div id="instructions-dialog" class="overlay hidden">
                 <div class="dialog-content">
                     <h2 class="glow-text">📖 遊戲說明</h2>
-                    <div class="instructions-list">
-                        <p>🎮 使用方向鍵或滑動螢幕控制皮卡丘移動</p>
-                        <p>🍎 吃普通寶可夢得 <span class="highlight">10 分</span></p>
-                        <p>⭐ 每 100 分出現傳說寶可夢，吃掉得 <span class="highlight">50 分</span></p>
-                        <p>😼 達到 100 分後，喵喵會出現追擊你！</p>
-                        <p>⚠️ 喵喵碰到皮卡丘的<span class="highlight-danger">頭部</span>會扣 <span class="highlight-danger">50
-                                分</span></p>
-                        <p>💡 用身體擋住喵喵不會扣分，只有頭對頭才會！</p>
+                    <div class="instructions-list" id="instructions-list">
+                        <!-- JS Generated Content -->
                     </div>
                     <button id="start-game-confirm-btn" class="glow-button">我知道了</button>
                 </div>
@@ -91,6 +88,17 @@
             <div id="changelog-screen" class="overlay hidden">
                 <h2 class="glow-text" style="font-size: 2.5rem;">版本更新日誌</h2>
                 <div class="changelog-container">
+                    <div class="changelog-item">
+                        <div class="ver-tag">v1.2.5</div>
+                        <div class="ver-content">
+                            <h4>🎯 喵喵出現預告系統</h4>
+                            <ul>
+                                <li>✨ 新增「喵喵出現倒數」:達到100分後,喵喵將在5秒後出現!</li>
+                                <li>📍 位置預告:提前告知喵喵將出現的區域,讓你有時間準備策略!</li>
+                                <li>🎲 隨機位置:每次出現位置都不同,增加遊戲挑戰性。</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="changelog-item">
                         <div class="ver-tag">v1.2.4</div>
                         <div class="ver-content">
@@ -178,6 +186,11 @@
                 <button id="show-leaderboard-btn" class="glow-button small">🏆 排行榜</button>
                 <button id="version-btn" class="glow-button small">📋 版本更新</button>
             </div>
+            <div id="pokedex-tabs" class="pokedex-tabs hidden">
+                <button class="tab-button active" data-category="all">全部</button>
+                <button class="tab-button" data-category="starters">一般寶可夢</button>
+                <button class="tab-button" data-category="legendaries">傳說寶可夢</button>
+            </div>
             <div id="pokedex-grid" class="pokedex-grid hidden">
                 <!-- JS Generated Items -->
             </div>
@@ -192,7 +205,7 @@
                     <span class="chain-tag">(Tron)</span>
                 </div>
             </div>
-            <div class="version-info">Ver 1.2.4</div>
+            <div class="version-info">Ver 1.2.5</div>
         </footer>
 
     </div>
