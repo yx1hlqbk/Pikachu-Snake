@@ -722,6 +722,8 @@ class Game {
                 desc = `散發出念力場，使周圍時間變慢，讓你的移動速度<strong>減少 ${(config.multiplier - 1) * 100}%</strong>，持續 ${config.duration / 1000} 秒。`;
             } else if (config.type === 'SPEED_BOOST') {
                 desc = `憑藉著輕盈的身手，讓你的移動速度<strong>提升 ${(config.multiplier - 1) * 100}%</strong>，持續 ${config.duration / 1000} 秒。`;
+            } else if (config.type === 'SCORE_MULTIPLIER') {
+                desc = `傳說的氣場籠罩，獲得的分數<strong>變為 ${config.multiplier} 倍</strong>，持續 ${config.duration / 1000} 秒。`;
             }
 
             item.innerHTML = `
@@ -1194,6 +1196,10 @@ class Game {
                 this.eatSound.currentTime = 0;
                 this.eatSound.play().catch(e => console.log("Audio play failed:", e));
             }
+
+            // Apply Score Multiplier Buff
+            const scoreMultiplier = this.buffManager.getMultiplier('SCORE_MULTIPLIER');
+            points *= scoreMultiplier;
 
             this.#score += points;
             this.updateScoreUI();

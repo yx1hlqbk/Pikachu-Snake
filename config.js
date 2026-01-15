@@ -50,6 +50,13 @@ const GAME_CONFIG = {
             multiplier: 1.5,
             duration: 10000, // 10秒
             color: '#ff69b4'
+        },
+        249: { // 洛奇亞
+            name: '洛奇亞',
+            type: 'SCORE_MULTIPLIER', // 分數加倍
+            multiplier: 2,            // 2倍
+            duration: 10000,          // 10秒
+            color: '#b0c4de'
         }
     },
 
@@ -60,7 +67,7 @@ const GAME_CONFIG = {
         151: true,  // 夢幻
 
         // Generation 2
-        249: false,  // 洛奇亞
+        249: true,  // 洛奇亞
         250: false,  // 鳳王
 
         // Generation 3

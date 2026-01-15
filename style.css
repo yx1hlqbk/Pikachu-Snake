@@ -1456,6 +1456,20 @@ canvas {
     padding: 10px;
 }
 
+/* Custom Scrollbar for Buff Info List (Same as Changelog) */
+.buff-info-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.buff-info-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.buff-info-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
 .buff-info-item {
     display: flex;
     align-items: center;
