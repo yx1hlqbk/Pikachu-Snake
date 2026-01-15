@@ -147,7 +147,7 @@ class Game {
 
         // Load Assets
         this.headImage = new Image();
-        this.headImage.src = 'assets/sprites/pikachu_final.png?v=' + new Date().getTime();
+        this.headImage.src = 'assets/pokemon/pikachu.png?v=' + new Date().getTime();
 
         // Load Audio
         this.eatSound = new Audio('assets/audio/pikachu.mp3');
@@ -221,7 +221,7 @@ class Game {
         // Enemy System
         this.enemy = new EnemySnake();
         this.enemyImage = new Image();
-        this.enemyImage.src = 'assets/sprites/meowth.png';
+        this.enemyImage.src = 'assets/pokemon/meowth.png';
         this.enemyCooldown = 0;
 
         // Leaderboard State
