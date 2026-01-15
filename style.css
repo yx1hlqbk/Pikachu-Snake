@@ -171,7 +171,8 @@ canvas {
 #changelog-screen,
 #leaderboard-screen,
 #buff-info-screen,
-#instructions-dialog {
+#instructions-dialog,
+#pokedex-screen {
     z-index: 50;
 }
 
@@ -721,7 +722,10 @@ canvas {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    max-height: 400px;
+    max-height: 50vh;
+    /* 使用 viewport height 以適應不同螢幕 */
+    width: 95%;
+    max-width: 600px;
     overflow-y: auto;
     transition: all 0.3s ease;
 }

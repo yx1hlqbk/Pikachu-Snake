@@ -148,6 +148,20 @@
             <button id="close-buff-info-btn" class="glow-button small">關閉</button>
         </div>
 
+        <div id="pokedex-screen" class="overlay hidden">
+            <h2 class="glow-text">寶可夢圖鑑</h2>
+            <div id="pokedex-tabs" class="pokedex-tabs">
+                <button class="tab-button active" data-category="all">全部</button>
+                <button class="tab-button" data-category="starters">一般寶可夢</button>
+                <button class="tab-button" data-category="legendaries">傳說寶可夢</button>
+            </div>
+            <!-- wrap grid in a container for scrolling if needed, or modify grid css -->
+            <div id="pokedex-grid" class="pokedex-grid">
+                <!-- JS Generated Items -->
+            </div>
+            <button id="close-pokedex-btn" class="glow-button small" style="margin-top: 20px;">關閉</button>
+        </div>
+
         <div id="marquee-container" class="marquee-container hidden">
             <div id="marquee-text"></div>
         </div>
@@ -159,14 +173,6 @@
                 <button id="show-buff-info-btn" class="glow-button small">✨ 傳說能力</button>
                 <button id="show-leaderboard-btn" class="glow-button small">🏆 排行榜</button>
                 <button id="version-btn" class="glow-button small">📋 版本更新</button>
-            </div>
-            <div id="pokedex-tabs" class="pokedex-tabs hidden">
-                <button class="tab-button active" data-category="all">全部</button>
-                <button class="tab-button" data-category="starters">一般寶可夢</button>
-                <button class="tab-button" data-category="legendaries">傳說寶可夢</button>
-            </div>
-            <div id="pokedex-grid" class="pokedex-grid hidden">
-                <!-- JS Generated Items -->
             </div>
         </div>
 

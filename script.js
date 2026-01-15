@@ -450,10 +450,11 @@ class Game {
 
     closeAllOverlays() {
         // 關閉圖鑑
-        const pokedexGrid = document.getElementById('pokedex-grid');
-        const pokedexTabs = document.getElementById('pokedex-tabs');
-        if (pokedexGrid) pokedexGrid.classList.add('hidden');
-        if (pokedexTabs) pokedexTabs.classList.add('hidden');
+        const pokedexScreen = document.getElementById('pokedex-screen');
+        if (pokedexScreen) {
+            pokedexScreen.classList.remove('active');
+            pokedexScreen.classList.add('hidden');
+        }
 
         // 關閉版本更新
         const changelogScreen = document.getElementById('changelog-screen');
@@ -558,19 +559,27 @@ class Game {
 
         // Pokedex Toggle
         const toggleBtn = document.getElementById('toggle-pokedex-btn');
-        const pokedexGrid = document.getElementById('pokedex-grid');
-        if (toggleBtn && pokedexGrid) {
+        const pokedexScreen = document.getElementById('pokedex-screen');
+        const closePokedexBtn = document.getElementById('close-pokedex-btn');
+
+        if (toggleBtn && pokedexScreen) {
             toggleBtn.addEventListener('click', () => {
-                const isHidden = pokedexGrid.classList.contains('hidden');
-                closeAllViews(); // Close everything first
+                const isHidden = pokedexScreen.classList.contains('hidden');
+                this.closeAllOverlays();
 
                 if (isHidden) {
-                    pokedexGrid.classList.remove('hidden');
-                    if (this.pokedexTabs) this.pokedexTabs.classList.remove('hidden');
+                    pokedexScreen.classList.remove('hidden');
+                    pokedexScreen.classList.add('active');
                     this.renderPokedex(this.currentCategory);
-                    setTimeout(() => pokedexGrid.scrollIntoView({ behavior: 'smooth' }), 100);
                 }
             });
+
+            if (closePokedexBtn) {
+                closePokedexBtn.addEventListener('click', () => {
+                    pokedexScreen.classList.add('hidden');
+                    pokedexScreen.classList.remove('active');
+                });
+            }
         }
 
         // Pokedex Tabs
