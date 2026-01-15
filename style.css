@@ -1408,11 +1408,12 @@ canvas {
 /* 行動裝置適配 */
 @media (max-width: 768px) {
     .buff-container {
-        bottom: 180px;
-        /* 調整至遊戲畫面下方的紅框區域 */
-        gap: 8px;
-        transform: translateX(-50%) scale(0.9);
-        /* 稍微放大一點點，原本 0.8 有點太小 */
+        /* Remove positioning overrides */
+        bottom: auto;
+        transform: none;
+        width: 100%;
+        margin-top: 15px;
+        /* Slightly smaller margin on mobile */
     }
 
     .buff-item {
