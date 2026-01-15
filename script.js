@@ -211,9 +211,10 @@ class Game {
         this.isPaused = false;
         this.lastTime = 0;
 
-        // Entities
-        this.snake = [];
-        this.food = {}; // {x, y, type: 'normal'|'legendary', spriteIndex: 0-19}
+        // Food and Legendary
+        this.food = {};
+        this.legendary = null; // New independent legendary state
+        this.spawnFood();
         this.velocity = { x: 0, y: 0 };
         this.nextVelocity = { x: 0, y: 0 };
         this.particles = [];
@@ -399,11 +400,12 @@ class Game {
         this.nextVelocity = { x: 1, y: 0 };
         this.#score = 0;
         this.particles = [];
-        this.rainDrops = []; // Clear rain drops on init
+        this.rainDrops = [];
         this.enemy.active = false;
         this.enemyCooldown = 0;
         this.meowthSpawnTimer = 0;
         this.meowthSpawnPosition = null;
+        this.legendary = null; // Reset legendary
         this.updateScoreUI();
         this.spawnFood();
         this.isRunning = true;
@@ -887,7 +889,7 @@ class Game {
         let validPosition = false;
         let newPos = { x: 0, y: 0 };
         let attempts = 0;
-        const maxAttempts = this.tileCount * this.tileCount; // Prevent infinite loop
+        const maxAttempts = this.tileCount * this.tileCount;
 
         while (!validPosition && attempts < maxAttempts) {
             newPos = {
@@ -900,14 +902,15 @@ class Game {
 
             // Check against food
             if (validPosition && this.food.x !== undefined) {
-                if (this.food.type === 'legendary') {
-                    validPosition = !(
-                        newPos.x >= this.food.x && newPos.x < this.food.x + 2 &&
-                        newPos.y >= this.food.y && newPos.y < this.food.y + 2
-                    );
-                } else {
-                    validPosition = !(newPos.x === this.food.x && newPos.y === this.food.y);
-                }
+                validPosition = !(newPos.x === this.food.x && newPos.y === this.food.y);
+            }
+
+            // Check against legendary
+            if (validPosition && this.legendary) {
+                validPosition = !(
+                    newPos.x >= this.legendary.x && newPos.x < this.legendary.x + 2 &&
+                    newPos.y >= this.legendary.y && newPos.y < this.legendary.y + 2
+                );
             }
 
             // Check against enemy body
@@ -915,7 +918,7 @@ class Game {
                 validPosition = !this.enemy.body.some(part => part.x === newPos.x && part.y === newPos.y);
             }
 
-            // Check against other rain drops
+            // Check against rain drops
             if (validPosition && this.rainDrops.length > 0) {
                 validPosition = !this.rainDrops.some(drop => drop.x === newPos.x && drop.y === newPos.y);
             }
@@ -926,43 +929,63 @@ class Game {
     }
 
     spawnFood() {
-        let validPosition = false;
-        while (!validPosition) {
+        // Normal food spawning only
+        const pos = this.getRandomEmptyPosition();
+        if (pos) {
             this.food = {
-                x: Math.floor(Math.random() * this.tileCount),
-                y: Math.floor(Math.random() * this.tileCount),
+                x: pos.x,
+                y: pos.y,
                 type: 'normal',
                 spriteIndex: Math.floor(Math.random() * this.pokemonSprites.length)
             };
+        }
+    }
 
-            // Allow render even if sprites are still loading (fallback will handle it)
-            // But once loaded, length will be 19.
-            // We pushed all image objects synchronously in constructor!
-            // So length is 19 immediately. Safe.
+    trySpawnLegendary() {
+        // Condition: Score is multiple of SpawnScore (e.g., 100, 200...)
+        // And no legendary currently exists
+        if (this.#score > 0 && this.#score % GAME_CONFIG.scoring.legendarySpawnScore === 0 && !this.legendary) {
+            const enabledLegendaries = this.legendaryImages.filter(img => {
+                const id = parseInt(img.dataset.id);
+                return GAME_CONFIG.legendarySpawnRules[id] !== false;
+            });
 
-            if (this.#score > 0 && this.#score % GAME_CONFIG.scoring.legendarySpawnScore === 0) {
-                // 過濾出已啟用的傳說寶可夢
-                const enabledLegendaries = this.legendaryImages.filter(img => {
-                    const id = parseInt(img.dataset.id);
-                    // 如果 legendarySpawnRules 中沒有設定，預設為 true
-                    return GAME_CONFIG.legendarySpawnRules[id] !== false;
-                });
+            if (enabledLegendaries.length > 0) {
+                // Try to find a 2x2 space
+                let attempts = 0;
+                let valid = false;
+                let lx, ly;
 
-                // 從已啟用的傳說寶可夢中隨機選擇
-                if (enabledLegendaries.length > 0) {
-                    this.food.type = 'legendary';
-                    const randomEnabledLegendary = enabledLegendaries[Math.floor(Math.random() * enabledLegendaries.length)];
-                    this.food.legendaryIndex = this.legendaryImages.indexOf(randomEnabledLegendary);
-                } else {
-                    // 如果沒有啟用的傳說寶可夢，保持為普通食物
-                    this.food.type = 'normal';
+                while (!valid && attempts < 50) {
+                    lx = Math.floor(Math.random() * (this.tileCount - 1));
+                    ly = Math.floor(Math.random() * (this.tileCount - 1));
+
+                    // Check collision for 2x2 area
+                    const occupied = this.snake.some(p =>
+                        (p.x >= lx && p.x < lx + 2 && p.y >= ly && p.y < ly + 2)
+                    ) || (this.food.x !== undefined &&
+                        this.food.x >= lx && this.food.x < lx + 2 &&
+                        this.food.y >= ly && this.food.y < ly + 2
+                        );
+
+                    if (!occupied) valid = true;
+                    attempts++;
                 }
-            }
 
-            validPosition = !this.snake.some(part => part.x === this.food.x && part.y === this.food.y);
-            // Also check against rain drops
-            if (validPosition && this.rainDrops.length > 0) {
-                validPosition = !this.rainDrops.some(drop => drop.x === this.food.x && drop.y === this.food.y);
+                if (valid) {
+                    const lImg = enabledLegendaries[Math.floor(Math.random() * enabledLegendaries.length)];
+                    this.legendary = {
+                        x: lx,
+                        y: ly,
+                        type: 'legendary',
+                        legendaryIndex: this.legendaryImages.indexOf(lImg),
+                        spawnTime: Date.now(),
+                        lifetime: GAME_CONFIG.scoring.legendaryLifetime
+                    };
+
+                    // Play spawn sound if any (Optional)
+                    this.showMarquee("傳說寶可夢出現了！");
+                }
             }
         }
     }
@@ -1244,49 +1267,13 @@ class Game {
 
         this.snake.unshift(head);
 
-        // 碰撞判定：傳說寶可夢的碰撞範圍是 2x2 格子（4 倍）
-        let foodCollision = false;
-        if (this.food.type === 'legendary') {
-            // 傳說寶可夢佔據 2x2 格子，檢查頭部是否在這個範圍內
-            foodCollision = (
-                head.x >= this.food.x && head.x < this.food.x + 2 &&
-                head.y >= this.food.y && head.y < this.food.y + 2
-            );
-        } else {
-            // 普通食物只佔 1x1 格子
-            foodCollision = (head.x === this.food.x && head.y === this.food.y);
-        }
+        // Track if any food was eaten this frame
+        let foodEatenThisFrame = false;
 
-        if (foodCollision) {
+        // Check Food Collision (Normal)
+        if (head.x === this.food.x && head.y === this.food.y) {
             let points = GAME_CONFIG.scoring.normalFood;
             let color = '#ffff00'; // Yellow explosion
-
-            if (this.food.type === 'legendary') {
-                points = GAME_CONFIG.scoring.legendaryFood;
-                color = '#a600ff';
-
-                // Play Legendary Cry
-                const legendaryImg = this.legendaryImages[this.food.legendaryIndex];
-                if (legendaryImg && legendaryImg.dataset.id) {
-                    const pokemonId = parseInt(legendaryImg.dataset.id);
-                    this.playLegendaryCry(pokemonId);
-
-                    // Trigger Buff if this legendary has a buff
-                    if (GAME_CONFIG.legendaryBuffs[pokemonId]) {
-                        const buffConfig = GAME_CONFIG.legendaryBuffs[pokemonId];
-                        this.buffManager.addBuff(
-                            pokemonId.toString(),
-                            buffConfig.duration,
-                            buffConfig
-                        );
-                        this.updateBuffUI();
-                    }
-                }
-            } else {
-                // Play Normal Eat Sound
-                this.eatSound.currentTime = 0;
-                this.eatSound.play().catch(e => console.log("Audio play failed:", e));
-            }
 
             // Apply Score Multiplier Buff
             const scoreMultiplier = this.buffManager.getMultiplier('SCORE_MULTIPLIER');
@@ -1328,7 +1315,7 @@ class Game {
 
         if (!this.isRunning) return;
 
-        // Draw Food
+        // Draw Food (Normal)
         if (this.food.x !== undefined) {
             const x = this.food.x * this.gridSize;
             const y = this.food.y * this.gridSize;
@@ -1336,30 +1323,43 @@ class Game {
             const offset = (size - this.gridSize) / 2;
 
             this.ctx.shadowBlur = 15;
-            this.ctx.shadowColor = this.food.type === 'legendary' ? '#a600ff' : '#bc13fe';
+            this.ctx.shadowColor = '#bc13fe';
 
-            if (this.food.type === 'legendary') {
-                const lSize = this.gridSize * 2.5;
-                const lOffset = (lSize - this.gridSize) / 2;
-                const lImg = this.legendaryImages[this.food.legendaryIndex] || this.legendaryImages[0];
-                this.ctx.drawImage(lImg, x - lOffset, y - lOffset, lSize, lSize);
-
-                this.ctx.strokeStyle = '#fff';
-                this.ctx.lineWidth = 1;
-                this.ctx.beginPath();
-                this.ctx.arc(x + this.gridSize / 2, y + this.gridSize / 2, this.gridSize, 0, Math.PI * 2);
-                this.ctx.stroke();
+            const img = this.pokemonSprites[this.food.spriteIndex];
+            if (img) {
+                this.ctx.drawImage(img, x - offset, y - offset, size, size);
             } else {
-                const img = this.pokemonSprites[this.food.spriteIndex];
-                if (img) {
-                    this.ctx.drawImage(img, x - offset, y - offset, size, size);
-                } else {
-                    this.ctx.fillStyle = '#bc13fe';
-                    this.ctx.beginPath();
-                    this.ctx.arc(x + this.gridSize / 2, y + this.gridSize / 2, this.gridSize / 2, 0, Math.PI * 2);
-                    this.ctx.fill();
-                }
+                this.ctx.fillStyle = '#bc13fe';
+                this.ctx.beginPath();
+                this.ctx.arc(x + this.gridSize / 2, y + this.gridSize / 2, this.gridSize / 2, 0, Math.PI * 2);
+                this.ctx.fill();
             }
+            this.ctx.shadowBlur = 0;
+        }
+
+        // Draw Legendary
+        if (this.legendary) {
+            const lx = this.legendary.x * this.gridSize;
+            const ly = this.legendary.y * this.gridSize;
+            const lSize = this.gridSize * 2.5;
+            const lOffset = (lSize - this.gridSize) / 2;
+
+            this.ctx.shadowBlur = 20;
+            this.ctx.shadowColor = '#a600ff';
+
+            const lImg = this.legendaryImages[this.legendary.legendaryIndex] || this.legendaryImages[0];
+            this.ctx.drawImage(lImg, lx - lOffset, ly - lOffset, lSize, lSize);
+
+            // Draw timer circle or indicator
+            const timeLeft = this.legendary.lifetime - (Date.now() - this.legendary.spawnTime);
+            const percent = Math.max(0, timeLeft / this.legendary.lifetime);
+
+            this.ctx.strokeStyle = `rgba(255, 255, 255, ${percent})`;
+            this.ctx.lineWidth = 2;
+            this.ctx.beginPath();
+            this.ctx.arc(lx + this.gridSize, ly + this.gridSize, this.gridSize * 1.5, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * percent));
+            this.ctx.stroke();
+
             this.ctx.shadowBlur = 0;
         }
 

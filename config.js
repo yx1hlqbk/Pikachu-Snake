@@ -22,7 +22,8 @@ const GAME_CONFIG = {
     scoring: {
         normalFood: 10,         // 普通食物分數
         legendaryFood: 100,      // 傳說食物分數
-        legendarySpawnScore: 10 // 傳說食物出現分數倍數（每100分出現一次）
+        legendarySpawnScore: 10, // 傳說食物出現分數倍數（每100分出現一次）
+        legendaryLifetime: 15000 // 傳說寶可夢存在時間 (15秒)
     },
 
     // 敵人系統（喵喵）
