@@ -212,6 +212,7 @@ class Game {
         this.lastTime = 0;
 
         // Food and Legendary
+        this.snake = []; // Restore snake initialization
         this.food = {};
         this.legendary = null; // New independent legendary state
         this.spawnFood();
