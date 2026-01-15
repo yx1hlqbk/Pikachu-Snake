@@ -1630,7 +1630,7 @@ class Game {
         this.buffManager.clearAllBuffs();
         if (this.buffContainerEl) {
             this.buffContainerEl.innerHTML = '';
-            this.buffContainerEl.classList.add('hidden');
+            this.buffContainerEl.classList.add('hidden'); // Ensure it is hidden
         }
 
         // Show buttons again
