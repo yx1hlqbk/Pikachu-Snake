@@ -992,7 +992,7 @@ class Game {
                     };
 
                     // Play spawn sound if any (Optional)
-                    this.showMarquee("傳說寶可夢出現了！");
+                    // Marquee removed as requested
                 }
             }
 
@@ -1394,7 +1394,10 @@ class Game {
             const lx = this.legendary.x * this.gridSize;
             const ly = this.legendary.y * this.gridSize;
             const lSize = this.gridSize * 2.5;
-            const lOffset = (lSize - this.gridSize) / 2;
+            // Center the 2.5x image over the 2x2 grid area
+            // 2x2 grid width = 2 * this.gridSize
+            // Offset = (ImageWidth - GridWidth) / 2
+            const lOffset = (lSize - 2 * this.gridSize) / 2;
 
             this.ctx.shadowBlur = 20;
             this.ctx.shadowColor = '#a600ff';
@@ -1409,6 +1412,7 @@ class Game {
             this.ctx.strokeStyle = `rgba(255, 255, 255, ${percent})`;
             this.ctx.lineWidth = 2;
             this.ctx.beginPath();
+            // Center the arc at the center of the 2x2 area
             this.ctx.arc(lx + this.gridSize, ly + this.gridSize, this.gridSize * 1.5, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * percent));
             this.ctx.stroke();
 
