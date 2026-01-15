@@ -320,6 +320,7 @@ class Game {
 
     startGameFromDialog() {
         // Hide instructions dialog
+        const instructionsDialog = document.getElementById('instructions-dialog');
         if (instructionsDialog) {
             instructionsDialog.classList.add('hidden');
             instructionsDialog.classList.remove('active');
