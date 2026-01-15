@@ -726,6 +726,8 @@ class Game {
                 desc = `傳說的氣場籠罩，獲得的分數<strong>變為 ${config.multiplier} 倍</strong>，持續 ${config.duration / 1000} 秒。`;
             } else if (config.type === 'MEOWTH_INVINCIBLE') {
                 desc = `鳳凰的神聖火焰保護著你，<strong>碰到喵喵不會扣分</strong>，持續 ${config.duration / 1000} 秒。`;
+            } else if (config.type === 'MOVEMENT_BONUS') {
+                desc = `蓋歐卡喚來始源之海，<strong>每移動一步獲得 ${config.scorePerStep} 分</strong>，持續 ${config.duration / 1000} 秒。`;
             }
 
             item.innerHTML = `
@@ -1153,9 +1155,20 @@ class Game {
         if (this.accumulatedTime < effectiveGameSpeed) return;
         this.accumulatedTime -= effectiveGameSpeed;
 
-        this.velocity = this.nextVelocity;
+        this.velocity = this.nextVelocity; // Update velocity based on nextVelocity
+        // Move Snake
         const head = { x: this.snake[0].x + this.velocity.x, y: this.snake[0].y + this.velocity.y };
 
+        // Apply MOVEMENT_BONUS buff
+        const movementBuff = Array.from(this.buffManager.getActiveBuffs().values())
+            .find(buff => buff.config.type === 'MOVEMENT_BONUS');
+
+        if (movementBuff) {
+            this.#score += movementBuff.config.scorePerStep;
+            this.updateScoreUI();
+        }
+
+        // Check Wall Collision
         if (head.x < 0 || head.x >= this.tileCount || head.y < 0 || head.y >= this.tileCount ||
             this.snake.some(part => part.x === head.x && part.y === head.y)) {
             this.createExplosion(this.snake[0].x * this.gridSize + 10, this.snake[0].y * this.gridSize + 10, '#f6e652');

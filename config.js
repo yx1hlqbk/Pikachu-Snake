@@ -64,6 +64,13 @@ const GAME_CONFIG = {
             multiplier: 1,             // 碰撞不扣分
             duration: 10000,           // 10秒
             color: '#ff4500'
+        },
+        382: { // 蓋歐卡
+            name: '蓋歐卡',
+            type: 'MOVEMENT_BONUS',    // 移動加分
+            scorePerStep: 10,          // 每步+10分
+            duration: 10000,           // 10秒
+            color: '#00bfff'
         }
     },
 
@@ -78,7 +85,7 @@ const GAME_CONFIG = {
         250: true,  // 鳳王
 
         // Generation 3
-        382: false,  // 蓋歐卡
+        382: true,   // 蓋歐卡
         383: false,  // 固拉多
         384: false,  // 烈空坐
 
