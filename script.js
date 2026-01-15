@@ -94,7 +94,7 @@ class EnemySnake {
         const hy = head.y * gridSize;
 
         if (img && img.complete && img.naturalWidth !== 0) { // Check if loaded
-            const size = gridSize * 3.8; // Make it big like Pikachu
+            const size = gridSize * 2.5; // Adjusted size for official artwork
             const offset = (size - gridSize) / 2;
             ctx.drawImage(img, hx - offset, hy - offset, size, size);
         } else {
