@@ -73,6 +73,14 @@ const GAME_CONFIG = {
             maxItems: 5,               // 同時存在5個
             duration: 10000,           // 10秒
             color: '#00bfff'
+        },
+        383: { // 固拉多
+            name: '固拉多',
+            type: 'GROUDON_HAZARD',    // 斷崖之劍
+            count: 15,                 // 產生15個岩漿地形
+            penalty: 50,               // 碰到扣50分
+            duration: 10000,           // 10秒 (地形存在時間)
+            color: '#ff4500'
         }
     },
 
@@ -88,7 +96,7 @@ const GAME_CONFIG = {
 
         // Generation 3
         382: true,   // 蓋歐卡
-        383: false,  // 固拉多
+        383: true,   // 固拉多
         384: false,  // 烈空坐
 
         // Generation 4

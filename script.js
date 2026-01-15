@@ -273,6 +273,7 @@ class Game {
         this.buffManager = new BuffManager();
         this.particles = [];
         this.rainDrops = []; // For Kyogre's raining effect
+        this.magmaHazards = []; // For Groudon's magma effect
         this.buffContainerEl = document.getElementById('buff-container');
 
         this.initEventListeners();
@@ -406,6 +407,7 @@ class Game {
         this.#score = 0;
         this.particles = [];
         this.rainDrops = [];
+        this.magmaHazards = []; // Reset Groudon hazards
         this.enemy.active = false;
         this.enemyCooldown = 0;
         this.meowthSpawnTimer = 0;
@@ -932,6 +934,11 @@ class Game {
                 validPosition = !this.rainDrops.some(drop => drop.x === newPos.x && drop.y === newPos.y);
             }
 
+            // Check against magma hazards
+            if (validPosition && this.magmaHazards.length > 0) {
+                validPosition = !this.magmaHazards.some(h => h.x === newPos.x && h.y === newPos.y);
+            }
+
             attempts++;
         }
         return validPosition ? newPos : null;
@@ -1244,7 +1251,6 @@ class Game {
         // Move Snake
         const head = { x: this.snake[0].x + this.velocity.x, y: this.snake[0].y + this.velocity.y };
 
-        // Handle KYOGRE_RAIN buff logic
         const kyogreBuff = Array.from(this.buffManager.getActiveBuffs().values())
             .find(buff => buff.config.type === 'KYOGRE_RAIN');
 
@@ -1267,6 +1273,40 @@ class Game {
         } else {
             // Clear drops if buff ended
             this.rainDrops = [];
+        }
+
+        // Handle GROUDON_HAZARD buff logic
+        const groudonBuff = Array.from(this.buffManager.getActiveBuffs().values())
+            .find(buff => buff.config.type === 'GROUDON_HAZARD');
+
+        if (groudonBuff) {
+            // Spawn hazards if not enough (Spawn once at start, or maintain count?)
+            // Requirement: "eaten -> surroundings appear red dots"
+            // Let's spawn them if we have 0, but only if we haven't spawned yet? 
+            // Simple: Maintain a fixed number. If player eats (steps on) one, it's gone.
+
+            while (this.magmaHazards.length < groudonBuff.config.count) {
+                // Custom logic for "surroundings"? Or just random map?
+                // "周圍" implies around the player? Or just on map. 
+                // getRandomEmptyPosition is full map. Let's make it map-wide for now as standard.
+                // If "surroundings" is strict, we need a new helper. 
+                // Assuming "map-wide" for gameplay balance mostly.
+                const hazard = this.getRandomEmptyPosition();
+                if (hazard) this.magmaHazards.push(hazard);
+                else break; // Map full
+            }
+
+            // Check collision with hazards (PENALTY!)
+            const hazIndex = this.magmaHazards.findIndex(h => h.x === head.x && h.y === head.y);
+            if (hazIndex !== -1) {
+                this.#score = Math.max(0, this.#score - groudonBuff.config.penalty);
+                this.updateScoreUI();
+                this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, '#ff4500');
+                this.magmaHazards.splice(hazIndex, 1); // Remove hazard after triggering
+                console.log("Hit magma hazard!");
+            }
+        } else {
+            this.magmaHazards = [];
         }
 
         // Check Wall Collision
@@ -1394,6 +1434,27 @@ class Game {
                 this.ctx.arc(x + this.gridSize / 2, y + this.gridSize / 2, this.gridSize / 2, 0, Math.PI * 2);
                 this.ctx.fill();
             }
+            this.ctx.shadowBlur = 0;
+        }
+
+        // Draw Magma Hazards (Groudon)
+        if (this.magmaHazards.length > 0) {
+            this.ctx.shadowBlur = 10;
+            this.ctx.shadowColor = '#ff3300';
+            this.ctx.fillStyle = '#ff4500';
+
+            this.magmaHazards.forEach(hazard => {
+                const x = hazard.x * this.gridSize;
+                const y = hazard.y * this.gridSize;
+
+                // Pulsing effect
+                const scale = 1 + Math.sin(Date.now() / 200) * 0.1;
+                const r = (this.gridSize / 2.5) * scale;
+
+                this.ctx.beginPath();
+                this.ctx.arc(x + this.gridSize / 2, y + this.gridSize / 2, r, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
             this.ctx.shadowBlur = 0;
         }
 
