@@ -67,8 +67,9 @@ const GAME_CONFIG = {
         },
         382: { // 蓋歐卡
             name: '蓋歐卡',
-            type: 'MOVEMENT_BONUS',    // 移動加分
-            scorePerStep: 10,          // 每步+10分
+            type: 'KYOGRE_RAIN',       // 始源之雨
+            scorePerItem: 30,          // 每個水滴30分
+            maxItems: 5,               // 同時存在5個
             duration: 10000,           // 10秒
             color: '#00bfff'
         }

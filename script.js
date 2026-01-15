@@ -263,8 +263,10 @@ class Game {
         this.meowthSpawnTimer = 0;
         this.meowthSpawnPosition = null;
 
-        // Buff System
+        // Effects
         this.buffManager = new BuffManager();
+        this.particles = [];
+        this.rainDrops = []; // For Kyogre's raining effect
         this.buffContainerEl = document.getElementById('buff-container');
 
         this.initEventListeners();
@@ -397,6 +399,7 @@ class Game {
         this.nextVelocity = { x: 1, y: 0 };
         this.#score = 0;
         this.particles = [];
+        this.rainDrops = []; // Clear rain drops on init
         this.enemy.active = false;
         this.enemyCooldown = 0;
         this.meowthSpawnTimer = 0;
@@ -728,6 +731,8 @@ class Game {
                 desc = `鳳凰的神聖火焰保護著你，<strong>碰到喵喵不會扣分</strong>，持續 ${config.duration / 1000} 秒。`;
             } else if (config.type === 'MOVEMENT_BONUS') {
                 desc = `蓋歐卡喚來始源之海，<strong>每移動一步獲得 ${config.scorePerStep} 分</strong>，持續 ${config.duration / 1000} 秒。`;
+            } else if (config.type === 'KYOGRE_RAIN') {
+                desc = `蓋歐卡喚來始源之雨，地圖將出現<strong>能量水滴</strong>，收集每個獲得 <strong>${config.scorePerItem} 分</strong>！`;
             }
 
             item.innerHTML = `
@@ -878,6 +883,48 @@ class Game {
         this.nextVelocity = { x, y };
     }
 
+    getRandomEmptyPosition() {
+        let validPosition = false;
+        let newPos = { x: 0, y: 0 };
+        let attempts = 0;
+        const maxAttempts = this.tileCount * this.tileCount; // Prevent infinite loop
+
+        while (!validPosition && attempts < maxAttempts) {
+            newPos = {
+                x: Math.floor(Math.random() * this.tileCount),
+                y: Math.floor(Math.random() * this.tileCount)
+            };
+
+            // Check against snake body
+            validPosition = !this.snake.some(part => part.x === newPos.x && part.y === newPos.y);
+
+            // Check against food
+            if (validPosition && this.food.x !== undefined) {
+                if (this.food.type === 'legendary') {
+                    validPosition = !(
+                        newPos.x >= this.food.x && newPos.x < this.food.x + 2 &&
+                        newPos.y >= this.food.y && newPos.y < this.food.y + 2
+                    );
+                } else {
+                    validPosition = !(newPos.x === this.food.x && newPos.y === this.food.y);
+                }
+            }
+
+            // Check against enemy body
+            if (validPosition && this.enemy.active) {
+                validPosition = !this.enemy.body.some(part => part.x === newPos.x && part.y === newPos.y);
+            }
+
+            // Check against other rain drops
+            if (validPosition && this.rainDrops.length > 0) {
+                validPosition = !this.rainDrops.some(drop => drop.x === newPos.x && drop.y === newPos.y);
+            }
+
+            attempts++;
+        }
+        return validPosition ? newPos : null;
+    }
+
     spawnFood() {
         let validPosition = false;
         while (!validPosition) {
@@ -890,7 +937,6 @@ class Game {
 
             // Allow render even if sprites are still loading (fallback will handle it)
             // But once loaded, length will be 19.
-            // Wait, this.pokemonSprites array grows as we push.
             // We pushed all image objects synchronously in constructor!
             // So length is 19 immediately. Safe.
 
@@ -914,6 +960,10 @@ class Game {
             }
 
             validPosition = !this.snake.some(part => part.x === this.food.x && part.y === this.food.y);
+            // Also check against rain drops
+            if (validPosition && this.rainDrops.length > 0) {
+                validPosition = !this.rainDrops.some(drop => drop.x === this.food.x && drop.y === this.food.y);
+            }
         }
     }
 
@@ -1159,13 +1209,29 @@ class Game {
         // Move Snake
         const head = { x: this.snake[0].x + this.velocity.x, y: this.snake[0].y + this.velocity.y };
 
-        // Apply MOVEMENT_BONUS buff
-        const movementBuff = Array.from(this.buffManager.getActiveBuffs().values())
-            .find(buff => buff.config.type === 'MOVEMENT_BONUS');
+        // Handle KYOGRE_RAIN buff logic
+        const kyogreBuff = Array.from(this.buffManager.getActiveBuffs().values())
+            .find(buff => buff.config.type === 'KYOGRE_RAIN');
 
-        if (movementBuff) {
-            this.#score += movementBuff.config.scorePerStep;
-            this.updateScoreUI();
+        if (kyogreBuff) {
+            // Spawn drops if needed
+            while (this.rainDrops.length < kyogreBuff.config.maxItems) {
+                const drop = this.getRandomEmptyPosition();
+                if (drop) this.rainDrops.push(drop);
+            }
+
+            // Check collision with drops
+            const dropIndex = this.rainDrops.findIndex(d => d.x === head.x && d.y === head.y);
+            if (dropIndex !== -1) {
+                this.#score += kyogreBuff.config.scorePerItem;
+                this.updateScoreUI();
+                this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, '#00bfff');
+                this.rainDrops.splice(dropIndex, 1);
+                // Sound effect could go here
+            }
+        } else {
+            // Clear drops if buff ended
+            this.rainDrops = [];
         }
 
         // Check Wall Collision
@@ -1352,12 +1418,31 @@ class Game {
                 this.ctx.fillStyle = gradient;
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
                 // Add border effect
                 this.ctx.strokeStyle = 'rgba(0, 191, 255, 0.8)';
                 this.ctx.lineWidth = 15;
                 this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
                 this.ctx.restore();
             }
+        }
+
+        // Draw Rain Drops (Kyogre)
+        if (this.rainDrops.length > 0) {
+            this.ctx.shadowBlur = 10;
+            this.ctx.shadowColor = '#00bfff';
+            this.ctx.fillStyle = '#00bfff';
+
+            this.rainDrops.forEach(drop => {
+                const x = drop.x * this.gridSize;
+                const y = drop.y * this.gridSize;
+
+                this.ctx.beginPath();
+                this.ctx.arc(x + this.gridSize / 2, y + this.gridSize / 2, this.gridSize / 2.5, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
+            this.ctx.shadowBlur = 0;
         }
     }
     gameLoop(currentTime) {
