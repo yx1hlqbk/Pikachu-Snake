@@ -1643,8 +1643,14 @@ class Game {
             this.buffContainerEl.classList.add('hidden'); // Ensure it is hidden
         }
 
-        // Show buttons again
-        if (this.pokedexSection) this.pokedexSection.classList.remove('hidden');
+        // Show buttons again and restore footer visibility
+        if (this.pokedexSection) {
+            this.pokedexSection.classList.remove('hidden');
+            this.pokedexSection.classList.remove('invisible');
+        }
+        if (this.footerEl) {
+            this.footerEl.classList.remove('invisible');
+        }
 
         // Force hide pokedex grid (user must click to open)
         const pokedexGrid = document.getElementById('pokedex-grid');
