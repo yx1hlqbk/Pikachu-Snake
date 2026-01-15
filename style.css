@@ -1301,18 +1301,29 @@ canvas {
 
 /* ===== Buff 容器樣式 ===== */
 .buff-container {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    /* Reset positioning to default flow */
+    position: relative;
+    /* Remove absolute positioning props */
+    bottom: auto;
+    left: auto;
+    transform: none;
+
     display: flex !important;
     justify-content: center;
     flex-direction: row;
     gap: 15px;
     z-index: 10;
     pointer-events: none;
-    width: auto;
-    height: auto;
+    width: 100%;
+    /* Take full width */
+    height: 80px;
+    /* Fixed height to create the "box" area user visualized */
+    margin-top: 20px;
+    /* Space from canvas */
+
+    /* Optional: Add background to visualize the "red box" area during debug, or transparent */
+    /* border: 1px solid rgba(255, 0, 0, 0.3); */
+    /* Debug visual */
 }
 
 .buff-item {
