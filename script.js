@@ -1310,6 +1310,7 @@ class Game {
 
 
             this.spawnFood();
+            this.trySpawnLegendary(); // Added missing call
             foodEatenThisFrame = true;
         }
 
