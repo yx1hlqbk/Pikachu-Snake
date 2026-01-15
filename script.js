@@ -363,6 +363,7 @@ class Game {
                 countdownScreen.classList.add('hidden');
                 countdownScreen.classList.remove('active');
                 // Start the game
+                this.buffContainerEl.classList.remove('hidden'); // Show buffs when game starts
                 this.init();
             }
         }, 1000);
