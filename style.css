@@ -1301,16 +1301,15 @@ canvas {
 
 /* ===== Buff 容器樣式 ===== */
 .buff-container {
-    position: fixed;
+    position: absolute;
     bottom: 20px;
-    /* 從 80px 改為 20px，更靠近底部 */
     left: 50%;
     transform: translateX(-50%);
     display: flex !important;
     justify-content: center;
     flex-direction: row;
     gap: 15px;
-    z-index: 99999;
+    z-index: 10;
     pointer-events: none;
     width: auto;
     height: auto;
