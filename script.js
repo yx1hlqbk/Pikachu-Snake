@@ -377,6 +377,9 @@ class Game {
         this.#score = 0;
         this.updateScoreUI();
 
+        // Show buff container again
+        if (this.buffContainerEl) this.buffContainerEl.classList.remove('hidden');
+
         // Hide all meowth timers before countdown
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
         if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
@@ -1624,7 +1627,10 @@ class Game {
 
         // Clear all Buffs on Game Over
         this.buffManager.clearAllBuffs();
-        if (this.buffContainerEl) this.buffContainerEl.innerHTML = '';
+        if (this.buffContainerEl) {
+            this.buffContainerEl.innerHTML = '';
+            this.buffContainerEl.classList.add('hidden');
+        }
 
         // Show buttons again
         if (this.pokedexSection) this.pokedexSection.classList.remove('hidden');
