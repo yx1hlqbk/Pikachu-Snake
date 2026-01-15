@@ -449,9 +449,9 @@ class Game {
         this.buffManager.clearAllBuffs();
         if (this.buffContainerEl) this.buffContainerEl.innerHTML = '';
 
-        // Hide buttons during game
-        if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
-        if (this.footerEl) this.footerEl.classList.add('hidden');
+        // Hide buttons during game (use invisible to preserve layout)
+        if (this.pokedexSection) this.pokedexSection.classList.add('invisible');
+        if (this.footerEl) this.footerEl.classList.add('invisible');
 
         this.lastTime = performance.now();
         requestAnimationFrame((time) => this.gameLoop(time));
