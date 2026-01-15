@@ -221,6 +221,7 @@ class Game {
         this.nextVelocity = { x: 0, y: 0 };
         this.particles = [];
         this.rainDrops = []; // Initialize here before spawnFood uses it
+        this.magmaHazards = []; // Initialize here before spawnFood uses it
 
         // Enemy System
         this.enemy = new EnemySnake();
@@ -271,9 +272,7 @@ class Game {
 
         // Effects
         this.buffManager = new BuffManager();
-        this.particles = [];
-        this.rainDrops = []; // For Kyogre's raining effect
-        this.magmaHazards = []; // For Groudon's magma effect
+        // particles, rainDrops, magmaHazards initialized earlier
         this.buffContainerEl = document.getElementById('buff-container');
 
         this.initEventListeners();
