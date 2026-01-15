@@ -451,7 +451,7 @@ canvas {
     margin-top: -20vh;
     /* Move it up significantly */
 }
-}
+
 
 @keyframes countdown-pulse {
     0% {
@@ -1351,7 +1351,7 @@ canvas {
     left: auto;
     transform: none;
 
-    display: flex !important;
+    display: flex;
     justify-content: center;
     flex-direction: row;
     gap: 15px;
