@@ -23,6 +23,24 @@ class BuffManager {
     }
 
     /**
+     * 透過 Buff ID 啟動 Buff
+     * @param {number} buffId 
+     */
+    activateBuff(buffId) {
+        if (!GAME_CONFIG.legendaryBuffs[buffId]) {
+            console.warn(`Unknown Buff ID: ${buffId}`);
+            return;
+        }
+
+        const config = GAME_CONFIG.legendaryBuffs[buffId];
+        // Use ID as the map key to allow multiple different buffs
+        // Or use config.name/type if we want to overwrite same type?
+        // Using ID is safer for unique buffs per pokemon.
+        this.addBuff(buffId, config.duration, config);
+        console.log(`Buff Activated: ${config.name}`);
+    }
+
+    /**
      * 更新所有 Buff 狀態，移除過期的 Buff
      * @param {number} currentTime - 當前時間戳
      * @returns {Array} 已過期的 Buff 類型列表
