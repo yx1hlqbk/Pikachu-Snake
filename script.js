@@ -452,6 +452,7 @@ class Game {
         this.startScreen.classList.add('active');
 
         if (this.pokedexSection) this.pokedexSection.classList.remove('hidden');
+        if (this.footerEl) this.footerEl.classList.remove('hidden');
 
         // Reset Score display
         this.#score = 0;
