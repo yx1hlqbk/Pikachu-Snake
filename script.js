@@ -1332,6 +1332,14 @@ class Game {
             this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
             this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
 
+            // Activate Legendary Buff
+            const lImg = this.legendaryImages[this.legendary.legendaryIndex];
+            if (lImg && lImg.dataset.id) {
+                const buffId = parseInt(lImg.dataset.id);
+                this.buffManager.activateBuff(buffId);
+                console.log(`Activated buff for ID: ${buffId}`);
+            }
+
             // Remove legendary and set next target
             this.legendary = null;
             this.legendarySpawnTarget = this.#score + GAME_CONFIG.scoring.legendarySpawnScore;
