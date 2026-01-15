@@ -580,11 +580,6 @@ class Game {
         const toggleBtn = document.getElementById('toggle-pokedex-btn');
         const pokedexScreen = document.getElementById('pokedex-screen');
         const closePokedexBtn = document.getElementById('close-pokedex-btn');
-
-        // Pokedex Toggle
-        const toggleBtn = document.getElementById('toggle-pokedex-btn');
-        const pokedexScreen = document.getElementById('pokedex-screen');
-        const closePokedexBtn = document.getElementById('close-pokedex-btn');
         const closePokedexX = document.getElementById('close-pokedex-x');
 
         if (toggleBtn && pokedexScreen) {
