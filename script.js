@@ -269,6 +269,7 @@ class Game {
         // Meowth Spawn State
         this.meowthSpawnTimer = 0;
         this.meowthSpawnPosition = null;
+        this.meowthAlertShown = false; // Track if alert has been shown
 
         // Effects
         this.buffManager = new BuffManager();
@@ -1170,10 +1171,20 @@ class Game {
                 // Countdown in progress
                 this.meowthSpawnTimer -= deltaTime;
 
-                // Update spawn alert UI
-                if (this.meowthSpawnAlertEl && this.meowthSpawnCountdownEl) {
+                // Update spawn alert UI (only show once)
+                if (this.meowthSpawnAlertEl && this.meowthSpawnCountdownEl && !this.meowthAlertShown) {
                     this.meowthSpawnAlertEl.classList.remove('hidden');
                     this.meowthSpawnCountdownEl.innerText = Math.ceil(this.meowthSpawnTimer / 1000);
+
+                    // Auto-hide after 5 seconds
+                    if (Math.ceil(this.meowthSpawnTimer / 1000) === 5) {
+                        setTimeout(() => {
+                            if (this.meowthSpawnAlertEl) {
+                                this.meowthSpawnAlertEl.classList.add('hidden');
+                            }
+                        }, 5000);
+                        this.meowthAlertShown = true;
+                    }
                 }
 
                 // Check if countdown finished

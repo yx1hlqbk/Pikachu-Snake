@@ -1293,8 +1293,8 @@ canvas {
 /* Meowth Spawn Alert */
 .meowth-spawn-alert {
     position: absolute;
-    bottom: -60px;
-    /* Position below canvas */
+    top: -50px;
+    /* Position above buff container */
     left: 50%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.9);
@@ -1305,7 +1305,7 @@ canvas {
     font-size: 1.1rem;
     font-weight: bold;
     text-shadow: 0 0 8px #ff9900, 0 0 15px #ff9900;
-    z-index: 15;
+    z-index: 20;
     pointer-events: none;
     box-shadow: 0 0 15px rgba(255, 153, 0, 0.5);
     animation: pulse-orange 1.5s infinite;
