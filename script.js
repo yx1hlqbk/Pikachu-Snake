@@ -340,9 +340,9 @@ class Game {
 
         if (!countdownScreen || !countdownNumber) return;
 
-        // Hide pokedex section buttons during countdown
-        if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
-        if (this.footerEl) this.footerEl.classList.add('hidden');
+        // Hide pokedex section buttons during countdown (use invisible to preserve layout)
+        if (this.pokedexSection) this.pokedexSection.classList.add('invisible');
+        if (this.footerEl) this.footerEl.classList.add('invisible');
 
         // Hide all meowth timers during countdown
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');

@@ -1426,6 +1426,13 @@ canvas {
     line-height: 1.2;
 }
 
+/* Utility class to hide elements while preserving layout space */
+.invisible {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
 /* Buff 類型顏色 - 使用 !important 確保覆蓋 */
 .buff-item[data-buff-id="150"] {
     border-color: #a040a0 !important;
