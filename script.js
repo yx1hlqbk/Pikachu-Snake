@@ -515,6 +515,12 @@ class Game {
         // Actually start game when confirming instructions
         document.getElementById('start-game-confirm-btn').addEventListener('click', () => this.startGameFromDialog());
 
+        // Close instructions dialog when clicking X button
+        const closeInstructionsBtn = document.getElementById('close-instructions-btn');
+        if (closeInstructionsBtn) {
+            closeInstructionsBtn.addEventListener('click', () => this.startGameFromDialog());
+        }
+
         // Show countdown when clicking restart
         document.getElementById('restart-btn').addEventListener('click', () => this.restartGame());
 
