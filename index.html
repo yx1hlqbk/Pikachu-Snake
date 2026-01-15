@@ -176,93 +176,72 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="changelog-item">
-                        <div class="ver-tag">v1.2.0</div>
-                        <div class="ver-content">
-                            <h4>⚡ 追擊挑戰更新</h4>
-                            <ul>
-                                <li>✨ 新增「敵對貪食蛇」：分數達 100 分時出現追擊玩家！</li>
-                                <li>🚫 碰撞懲罰：被敵方撞到將扣除 50 分。</li>
-                                <li>🎮 難度調整：優化整體遊戲節奏。</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="changelog-item">
-                        <div class="ver-tag">v1.1.0</div>
-                        <div class="ver-content">
-                            <h4>📚 圖鑑與音效大升級</h4>
-                            <ul>
-                                <li>📖 完整寶可夢圖鑑：收錄歷代御三家與傳說寶可夢。</li>
-                                <li>🔊 萌趣音效：皮卡丘吃東西時會有可愛叫聲。</li>
-                                <li>💎 介面優化：更精緻的霓虹視覺效果。</li>
-                            </ul>
-                        </div>
-                    </div>
+                    <button id="close-changelog-btn" class="glow-button small" style="margin-top: 20px;">關閉</button>
                 </div>
-                <button id="close-changelog-btn" class="glow-button small" style="margin-top: 20px;">關閉</button>
-            </div>
-            <div id="leaderboard-screen" class="overlay hidden">
-                <h2 class="glow-text">🏆 排行榜</h2>
-                <div class="leaderboard-container">
-                    <ul id="main-leaderboard-list">
-                        <!-- Items will be injected here -->
-                    </ul>
+                <div id="leaderboard-screen" class="overlay hidden">
+                    <h2 class="glow-text">🏆 排行榜</h2>
+                    <div class="leaderboard-container">
+                        <ul id="main-leaderboard-list">
+                            <!-- Items will be injected here -->
+                        </ul>
+                    </div>
+                    <button id="close-leaderboard-btn" class="glow-button small">關閉</button>
                 </div>
-                <button id="close-leaderboard-btn" class="glow-button small">關閉</button>
+
+                <!-- Buff 說明視窗 -->
+                <div id="buff-info-screen" class="overlay hidden">
+                    <h2 class="glow-text">✨ 傳說能力</h2>
+                    <div class="buff-info-list" id="buff-info-list">
+                        <!-- JS Generated Items -->
+                    </div>
+                    <button id="close-buff-info-btn" class="glow-button small">關閉</button>
+                </div>
             </div>
 
-            <!-- Buff 說明視窗 -->
-            <div id="buff-info-screen" class="overlay hidden">
-                <h2 class="glow-text">✨ 傳說能力</h2>
-                <div class="buff-info-list" id="buff-info-list">
+            <div id="marquee-container" class="marquee-container hidden">
+                <div id="marquee-text"></div>
+            </div>
+
+
+            <div class="pokedex-section">
+                <div class="button-row">
+                    <button id="toggle-pokedex-btn" class="glow-button small">📖 查看圖鑑</button>
+                    <button id="show-buff-info-btn" class="glow-button small">✨ 傳說能力</button>
+                    <button id="show-leaderboard-btn" class="glow-button small">🏆 排行榜</button>
+                    <button id="version-btn" class="glow-button small">📋 版本更新</button>
+                </div>
+                <div id="pokedex-tabs" class="pokedex-tabs hidden">
+                    <button class="tab-button active" data-category="all">全部</button>
+                    <button class="tab-button" data-category="starters">一般寶可夢</button>
+                    <button class="tab-button" data-category="legendaries">傳說寶可夢</button>
+                </div>
+                <div id="pokedex-grid" class="pokedex-grid hidden">
                     <!-- JS Generated Items -->
                 </div>
-                <button id="close-buff-info-btn" class="glow-button small">關閉</button>
             </div>
-        </div>
 
-        <div id="marquee-container" class="marquee-container hidden">
-            <div id="marquee-text"></div>
-        </div>
-
-
-        <div class="pokedex-section">
-            <div class="button-row">
-                <button id="toggle-pokedex-btn" class="glow-button small">📖 查看圖鑑</button>
-                <button id="show-buff-info-btn" class="glow-button small">✨ 傳說能力</button>
-                <button id="show-leaderboard-btn" class="glow-button small">🏆 排行榜</button>
-                <button id="version-btn" class="glow-button small">📋 版本更新</button>
-            </div>
-            <div id="pokedex-tabs" class="pokedex-tabs hidden">
-                <button class="tab-button active" data-category="all">全部</button>
-                <button class="tab-button" data-category="starters">一般寶可夢</button>
-                <button class="tab-button" data-category="legendaries">傳說寶可夢</button>
-            </div>
-            <div id="pokedex-grid" class="pokedex-grid hidden">
-                <!-- JS Generated Items -->
-            </div>
-        </div>
-
-        <footer class="game-footer">
-            <p class="author">作者: ian liao</p>
-            <div class="donation">
-                <p class="donate-text">✨ 喜歡這款遊戲？請作者喝杯咖啡,點亮創作熱情! ☕</p>
-                <div class="wallet-address" id="copy-wallet" style="cursor: pointer;" title="點擊複製地址">
-                    <button
-                        onclick="window.open('https://tronscan.org/#/address/TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx', '_blank')"
-                        class="glow-button small" style="margin-top: 10px; font-size: 0.8rem; padding: 5px 15px;">
-                        TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx <span class="chain-tag">(Tron)</span>
-                    </button>
+            <footer class="game-footer">
+                <p class="author">作者: ian liao</p>
+                <div class="donation">
+                    <p class="donate-text">✨ 喜歡這款遊戲？請作者喝杯咖啡,點亮創作熱情! ☕</p>
+                    <!-- Wallet Address (Modified Structure) -->
+                    <div class="wallet-address" id="copy-wallet"
+                        style="cursor: pointer; display: inline-block; padding: 8px 15px; margin-top: 10px;"
+                        title="點擊複製地址/開啟 TronScan">
+                        <span
+                            onclick="window.open('https://tronscan.org/#/address/TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx', '_blank')">
+                            TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx <span class="chain-tag">(Tron)</span>
+                        </span>
+                    </div>
 
                     <div style="margin-top: 15px; color: #666; font-size: 12px; letter-spacing: 2px;">
                         Ver 1.2.6
                     </div>
                 </div>
-            </div>
-            <script src="config.js?v=1.3.1"></script>
-            <script src="assets/clean_manifest.js?v=1.3.1"></script>
-            <script src="BuffManager.js?v=1.3.1"></script>
-            <script src="script.js?v=1.3.1"></script>
+                <script src="config.js?v=1.3.1"></script>
+                <script src="assets/clean_manifest.js?v=1.3.1"></script>
+                <script src="BuffManager.js?v=1.3.1"></script>
+                <script src="script.js?v=1.3.1"></script>
 </body>
 
 </html>
