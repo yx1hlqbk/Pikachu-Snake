@@ -215,13 +215,15 @@ class Game {
         this.snake = []; // Restore snake initialization
         this.food = {};
         this.legendary = null; // New independent legendary state
-        this.spawnFood();
+
         this.velocity = { x: 0, y: 0 };
         this.nextVelocity = { x: 0, y: 0 };
         this.particles = [];
 
         // Enemy System
         this.enemy = new EnemySnake();
+        this.spawnFood(); // Moved here to ensure enemy exists before checking position
+        this.enemyImage = new Image();
         this.enemyImage = new Image();
         this.enemyImage.src = 'assets/pokemon/meowth.png';
         this.enemyCooldown = 0;
