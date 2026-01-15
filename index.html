@@ -35,6 +35,11 @@
             ⚠️ 喵喵將在 <span id="meowth-spawn-countdown">5</span> 秒後出現於<span id="meowth-spawn-location">中央區域</span>!
         </div>
 
+        <!-- Buff 容器 -->
+        <div id="buff-container" class="buff-container">
+            <!-- 動態生成的 Buff 圖示 -->
+        </div>
+
         <div class="canvas-wrapper blur-panel">
             <canvas id="gameCanvas" width="600" height="600"></canvas>
 
@@ -130,7 +135,39 @@
                         </div>
                     </div>
                     <div class="changelog-item">
-                        <div class="ver-tag">v1.2.1</div>
+                        <div class="ver-tag">v1.2.6</div>
+                        <div class="ver-content">
+                            <h4>🛠️ 介面與體驗優化</h4>
+                            <ul>
+                                <li>✨ <strong>傳說能力說明</strong>：新增傳說 Buff 說明頁面，隨時查看特殊效果。</li>
+                                <li>🐛 <strong>問題修復</strong>：修正 Buff 圖示顯示異常與倒數計時器 Bug。</li>
+                                <li>📱 <strong>顯示優化</strong>：調整手機版介面配置，操作更順手。</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="changelog-item">
+                        <div class="ver-tag">v1.2.5</div>
+                        <div class="ver-content">
+                            <h4>✨ 傳說 Buff 系統登場</h4>
+                            <ul>
+                                <li>🟣 <strong>超夢</strong>：強大的念力場讓時間變慢（減速 50%）。</li>
+                                <li>🌸 <strong>夢幻</strong>：輕盈的身手讓移動更迅速（加速 50%）。</li>
+                                <li>📺 <strong>視覺優化</strong>：全新 Buff 狀態顯示，掌握能力剩餘時間。</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="changelog-item">
+                        <div class="ver-tag">v1.2.4</div>
+                        <div class="ver-content">
+                            <h4>😻 喵喵重生倒數</h4>
+                            <ul>
+                                <li>⏲️ 新增倒數計時器：精準掌握喵喵復活時間。</li>
+                                <li>📍 出現位置預告：提前顯示喵喵重生區域。</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="changelog-item">
+                        <div class="ver-tag">v1.2.3</div>
                         <div class="ver-content">
                             <h4>🏠 介面導航優化</h4>
                             <ul>
@@ -173,6 +210,15 @@
                 </div>
                 <button id="close-leaderboard-btn" class="glow-button small">關閉</button>
             </div>
+
+            <!-- Buff 說明視窗 -->
+            <div id="buff-info-screen" class="overlay hidden">
+                <h2 class="glow-text">✨ 傳說能力</h2>
+                <div class="buff-info-list" id="buff-info-list">
+                    <!-- JS Generated Items -->
+                </div>
+                <button id="close-buff-info-btn" class="glow-button small">關閉</button>
+            </div>
         </div>
 
         <div id="marquee-container" class="marquee-container hidden">
@@ -182,7 +228,8 @@
 
         <div class="pokedex-section">
             <div class="button-row">
-                <button id="toggle-pokedex-btn" class="glow-button small">📖 查看寶可夢圖鑑</button>
+                <button id="toggle-pokedex-btn" class="glow-button small">📖 查看圖鑑</button>
+                <button id="show-buff-info-btn" class="glow-button small">✨ 傳說能力</button>
                 <button id="show-leaderboard-btn" class="glow-button small">🏆 排行榜</button>
                 <button id="version-btn" class="glow-button small">📋 版本更新</button>
             </div>
@@ -210,9 +257,10 @@
 
     </div>
 
-    <script src="config.js"></script>
-    <script src="assets/clean_manifest.js"></script>
-    <script src="script.js"></script>
+    <script src="config.js?v=1.3.0"></script>
+    <script src="BuffManager.js?v=1.3.0"></script>
+    <script src="assets/clean_manifest.js?v=1.3.0"></script>
+    <script src="script.js?v=1.3.0"></script>
 </body>
 
 </html>

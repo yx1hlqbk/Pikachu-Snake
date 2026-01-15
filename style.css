@@ -1276,6 +1276,122 @@ canvas {
     }
 }
 
+/* ===== Buff 容器樣式 ===== */
+.buff-container {
+    position: fixed;
+    bottom: 20px;
+    /* 從 80px 改為 20px，更靠近底部 */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex !important;
+    justify-content: center;
+    flex-direction: row;
+    gap: 15px;
+    z-index: 99999;
+    pointer-events: none;
+    width: auto;
+    height: auto;
+}
+
+.buff-item {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    /* 改為垂直排列 */
+    gap: 2px;
+    /* 縮小圖片和秒數的間距 */
+    padding: 6px 10px;
+    /* 縮小內距 */
+    background: rgba(20, 20, 20, 0.95) !important;
+    border: 2px solid #fff;
+    /* 預設白色邊框 */
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    color: #fff;
+    /* 預設白色文字 */
+    pointer-events: auto;
+    opacity: 1 !important;
+    /* 強制不透明 */
+    visibility: visible !important;
+    /* 強制可見 */
+}
+
+/* 移除 hover 效果以免干擾 */
+/* .buff-item:hover { transform: translateX(5px); } */
+
+.buff-item img {
+    width: 36px;
+    /* 稍微縮小圖片 */
+    height: 36px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+.buff-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 讓內容水平置中 */
+    gap: 0;
+}
+
+.buff-name {
+    display: none !important;
+    /* 隱藏名字 */
+}
+
+.buff-timer {
+    font-size: 1rem;
+    /* 調整字體大小 */
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    line-height: 1.2;
+}
+
+/* Buff 類型顏色 - 使用 !important 確保覆蓋 */
+.buff-item[data-buff-id="150"] {
+    border-color: #a040a0 !important;
+    color: #d080d0 !important;
+    box-shadow: 0 0 15px #a040a0 !important;
+}
+
+.buff-item[data-buff-id="151"] {
+    border-color: #ff69b4 !important;
+    color: #ffb6c1 !important;
+    box-shadow: 0 0 15px #ff69b4 !important;
+}
+
+/* 移除所有動畫 keyframes 引用 */
+/* @keyframes buffAppear ... */
+/* @keyframes buffDisappear ... */
+/* @keyframes buffPulse ... */
+
+.buff-item.disappearing {
+    opacity: 0.5 !important;
+}
+
+/* 行動裝置適配 */
+@media (max-width: 768px) {
+    .buff-container {
+        bottom: 180px;
+        /* 調整至遊戲畫面下方的紅框區域 */
+        gap: 8px;
+        transform: translateX(-50%) scale(0.9);
+        /* 稍微放大一點點，原本 0.8 有點太小 */
+    }
+
+    .buff-item {
+        /* 不需要額外覆寫，使用主樣式即可 */
+    }
+
+    .buff-item img {
+        width: 32px;
+        height: 32px;
+    }
+}
+
 .meowth-spawn-alert.hidden {
     display: none;
 }
@@ -1311,4 +1427,85 @@ canvas {
     box-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
     transform: scale(1.02);
     transition: all 0.3s ease;
+}
+
+/* Buff 說明列表 */
+.buff-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.buff-info-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.buff-info-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+    border-color: var(--primary-color);
+}
+
+.buff-info-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
+
+.buff-info-details {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.buff-info-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px currentColor;
+}
+
+.buff-info-desc {
+    font-size: 0.95rem;
+    color: #eee;
+    line-height: 1.5;
+}
+
+/* 特定 Buff 樣式 */
+.buff-info-item[data-buff-id="150"] .buff-info-name {
+    color: #bc13fe;
+}
+
+.buff-info-item[data-buff-id="151"] .buff-info-name {
+    color: #ff69b4;
+}
+
+/* 強制統一底部按鈕列樣式 */
+.button-row .glow-button.small {
+    background: transparent !important;
+    border: 1px solid var(--primary-color) !important;
+    color: #fff !important;
+    padding: 8px 15px !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2) !important;
+    transition: all 0.3s ease;
+}
+
+.button-row .glow-button.small:hover {
+    background: var(--primary-color) !important;
+    color: #000 !important;
+    box-shadow: 0 0 20px var(--primary-color) !important;
+    transform: translateY(-2px);
 }

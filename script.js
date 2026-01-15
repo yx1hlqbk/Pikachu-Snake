@@ -263,6 +263,10 @@ class Game {
         this.meowthSpawnTimer = 0;
         this.meowthSpawnPosition = null;
 
+        // Buff System
+        this.buffManager = new BuffManager();
+        this.buffContainerEl = document.getElementById('buff-container');
+
         this.initEventListeners();
         this.updateHighScoreUI();
 
@@ -414,6 +418,10 @@ class Game {
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
         if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
 
+        // Reset Buff System
+        this.buffManager.clearAllBuffs();
+        if (this.buffContainerEl) this.buffContainerEl.innerHTML = '';
+
         // Hide buttons during game
         if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
 
@@ -438,6 +446,34 @@ class Game {
         // Hide Meowth Timers on Home Return
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
         if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
+    }
+
+    closeAllOverlays() {
+        // 關閉圖鑑
+        const pokedexGrid = document.getElementById('pokedex-grid');
+        const pokedexTabs = document.getElementById('pokedex-tabs');
+        if (pokedexGrid) pokedexGrid.classList.add('hidden');
+        if (pokedexTabs) pokedexTabs.classList.add('hidden');
+
+        // 關閉版本更新
+        const changelogScreen = document.getElementById('changelog-screen');
+        if (changelogScreen) {
+            changelogScreen.classList.remove('active');
+            changelogScreen.classList.add('hidden');
+        }
+
+        // 關閉排行榜
+        if (this.leaderboardScreen) {
+            this.leaderboardScreen.classList.remove('active');
+            this.leaderboardScreen.classList.add('hidden');
+        }
+
+        // 關閉 Buff 說明
+        const buffInfoScreen = document.getElementById('buff-info-screen');
+        if (buffInfoScreen) {
+            buffInfoScreen.classList.remove('active');
+            buffInfoScreen.classList.add('hidden');
+        }
     }
 
     initEventListeners() {
@@ -560,20 +596,22 @@ class Game {
         const changelogScreen = document.getElementById('changelog-screen');
         const closeChangelogBtn = document.getElementById('close-changelog-btn');
 
-        if (versionBtn && changelogScreen) {
+        if (versionBtn && changelogScreen && closeChangelogBtn) {
             versionBtn.addEventListener('click', () => {
-                closeAllViews();
+                this.closeAllOverlays();
                 changelogScreen.classList.remove('hidden');
                 changelogScreen.classList.add('active');
             });
-        }
 
-        if (closeChangelogBtn && changelogScreen) {
             closeChangelogBtn.addEventListener('click', () => {
-                changelogScreen.classList.add('hidden');
                 changelogScreen.classList.remove('active');
+                changelogScreen.classList.remove('active');
+                changelogScreen.classList.add('hidden');
             });
         }
+
+        // Initialize Buff Info Button
+        this.initBuffInfoButton();
 
         // Leaderboard Toggle
         const showLeaderboardBtn = document.getElementById('show-leaderboard-btn');
@@ -581,16 +619,20 @@ class Game {
 
         if (showLeaderboardBtn) {
             showLeaderboardBtn.addEventListener('click', () => {
-                closeAllViews();
-                this.leaderboardScreen.classList.remove('hidden');
-                this.leaderboardScreen.classList.add('active');
+                this.closeAllOverlays();
+                if (this.leaderboardScreen) {
+                    this.leaderboardScreen.classList.remove('hidden');
+                    this.leaderboardScreen.classList.add('active');
+                }
             });
         }
 
         if (closeLeaderboardBtn) {
             closeLeaderboardBtn.addEventListener('click', () => {
-                this.leaderboardScreen.classList.add('hidden');
-                this.leaderboardScreen.classList.remove('active');
+                if (this.leaderboardScreen) {
+                    this.leaderboardScreen.classList.add('hidden');
+                    this.leaderboardScreen.classList.remove('active');
+                }
             });
         }
 
@@ -627,6 +669,61 @@ class Game {
                     document.body.removeChild(textArea);
                 }
             });
+        }
+    }
+
+    initBuffInfoButton() {
+        const buffInfoBtn = document.getElementById('show-buff-info-btn');
+        const buffInfoScreen = document.getElementById('buff-info-screen');
+        const closeBuffInfoBtn = document.getElementById('close-buff-info-btn');
+        const buffInfoList = document.getElementById('buff-info-list');
+
+        if (buffInfoBtn && buffInfoScreen && closeBuffInfoBtn && buffInfoList) {
+            buffInfoBtn.addEventListener('click', () => {
+                this.closeAllOverlays();
+                this.renderBuffInfo(buffInfoList);
+                buffInfoScreen.classList.remove('hidden');
+                buffInfoScreen.classList.add('active');
+            });
+
+            closeBuffInfoBtn.addEventListener('click', () => {
+                buffInfoScreen.classList.remove('active');
+                buffInfoScreen.classList.add('hidden');
+            });
+        }
+    }
+
+    renderBuffInfo(container) {
+        container.innerHTML = '';
+
+        // 從 CONFIG 讀取傳說 Buff
+        const legendaryBuffs = GAME_CONFIG.legendaryBuffs;
+
+        for (const [id, config] of Object.entries(legendaryBuffs)) {
+            // 找到對應的圖片
+            const legendaryImg = this.legendaryImages.find(img => img.dataset.id === id);
+            const imgSrc = legendaryImg ? legendaryImg.src : '';
+
+            const item = document.createElement('div');
+            item.className = 'buff-info-item';
+            item.dataset.buffId = id;
+
+            let desc = '';
+            if (config.type === 'SPEED_SLOW') {
+                desc = `散發出念力場，使周圍時間變慢，讓你的移動速度<strong>減少 ${(config.multiplier - 1) * 100}%</strong>，持續 ${config.duration / 1000} 秒。`;
+            } else if (config.type === 'SPEED_BOOST') {
+                desc = `憑藉著輕盈的身手，讓你的移動速度<strong>提升 ${(config.multiplier - 1) * 100}%</strong>，持續 ${config.duration / 1000} 秒。`;
+            }
+
+            item.innerHTML = `
+                <img src="${imgSrc}" alt="${config.name}" class="buff-info-img">
+                <div class="buff-info-details">
+                    <div class="buff-info-name">${config.name}</div>
+                    <div class="buff-info-desc">${desc}</div>
+                </div>
+            `;
+
+            container.appendChild(item);
         }
     }
 
@@ -783,8 +880,22 @@ class Game {
             // So length is 19 immediately. Safe.
 
             if (this.#score > 0 && this.#score % GAME_CONFIG.scoring.legendarySpawnScore === 0) {
-                this.food.type = 'legendary';
-                this.food.legendaryIndex = Math.floor(Math.random() * this.legendaryImages.length);
+                // 過濾出已啟用的傳說寶可夢
+                const enabledLegendaries = this.legendaryImages.filter(img => {
+                    const id = parseInt(img.dataset.id);
+                    // 如果 legendarySpawnRules 中沒有設定，預設為 true
+                    return GAME_CONFIG.legendarySpawnRules[id] !== false;
+                });
+
+                // 從已啟用的傳說寶可夢中隨機選擇
+                if (enabledLegendaries.length > 0) {
+                    this.food.type = 'legendary';
+                    const randomEnabledLegendary = enabledLegendaries[Math.floor(Math.random() * enabledLegendaries.length)];
+                    this.food.legendaryIndex = this.legendaryImages.indexOf(randomEnabledLegendary);
+                } else {
+                    // 如果沒有啟用的傳說寶可夢，保持為普通食物
+                    this.food.type = 'normal';
+                }
             }
 
             validPosition = !this.snake.some(part => part.x === this.food.x && part.y === this.food.y);
@@ -864,6 +975,14 @@ class Game {
         });
 
         if (!this.isRunning) return;
+
+        // Update Buff System
+        const expiredBuffs = this.buffManager.updateBuffs(performance.now());
+
+        // 如果有 Buff 過期或有啟動中的 Buff，更新 UI
+        if (expiredBuffs.length > 0 || this.buffManager.getActiveBuffs().size > 0) {
+            this.updateBuffUI();
+        }
 
         // --- Enemy Logic Start ---
         // --- Enemy Logic Start ---
@@ -1000,9 +1119,16 @@ class Game {
         }
         // --- Enemy Logic End ---
 
+        // Apply SPEED_BOOST and SPEED_SLOW from Buff System
+        const speedBoostMultiplier = this.buffManager.getMultiplier('SPEED_BOOST');
+        const speedSlowMultiplier = this.buffManager.getMultiplier('SPEED_SLOW');
+
+        // 計算最終速度：加速效果除以倍率，減速效果乘以倍率
+        const effectiveGameSpeed = (this.gameSpeed / speedBoostMultiplier) * speedSlowMultiplier;
+
         this.accumulatedTime = (this.accumulatedTime || 0) + deltaTime;
-        if (this.accumulatedTime < this.gameSpeed) return;
-        this.accumulatedTime -= this.gameSpeed;
+        if (this.accumulatedTime < effectiveGameSpeed) return;
+        this.accumulatedTime -= effectiveGameSpeed;
 
         this.velocity = this.nextVelocity;
         const head = { x: this.snake[0].x + this.velocity.x, y: this.snake[0].y + this.velocity.y };
@@ -1016,7 +1142,20 @@ class Game {
 
         this.snake.unshift(head);
 
-        if (head.x === this.food.x && head.y === this.food.y) {
+        // 碰撞判定：傳說寶可夢的碰撞範圍是 2x2 格子（4 倍）
+        let foodCollision = false;
+        if (this.food.type === 'legendary') {
+            // 傳說寶可夢佔據 2x2 格子，檢查頭部是否在這個範圍內
+            foodCollision = (
+                head.x >= this.food.x && head.x < this.food.x + 2 &&
+                head.y >= this.food.y && head.y < this.food.y + 2
+            );
+        } else {
+            // 普通食物只佔 1x1 格子
+            foodCollision = (head.x === this.food.x && head.y === this.food.y);
+        }
+
+        if (foodCollision) {
             let points = GAME_CONFIG.scoring.normalFood;
             let color = '#ffff00'; // Yellow explosion
 
@@ -1027,7 +1166,19 @@ class Game {
                 // Play Legendary Cry
                 const legendaryImg = this.legendaryImages[this.food.legendaryIndex];
                 if (legendaryImg && legendaryImg.dataset.id) {
-                    this.playLegendaryCry(legendaryImg.dataset.id);
+                    const pokemonId = parseInt(legendaryImg.dataset.id);
+                    this.playLegendaryCry(pokemonId);
+
+                    // Trigger Buff if this legendary has a buff
+                    if (GAME_CONFIG.legendaryBuffs[pokemonId]) {
+                        const buffConfig = GAME_CONFIG.legendaryBuffs[pokemonId];
+                        this.buffManager.addBuff(
+                            pokemonId.toString(),
+                            buffConfig.duration,
+                            buffConfig
+                        );
+                        this.updateBuffUI();
+                    }
                 }
             } else {
                 // Play Normal Eat Sound
@@ -1144,7 +1295,6 @@ class Game {
             this.ctx.shadowBlur = 0;
         }
     }
-
     gameLoop(currentTime) {
         if (!this.isRunning && this.particles.length === 0) return;
         window.requestAnimationFrame((time) => this.gameLoop(time));
@@ -1186,6 +1336,10 @@ class Game {
         // Hide Meowth Timers on Game Over
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
         if (this.meowthSpawnAlertEl) this.meowthSpawnAlertEl.classList.add('hidden');
+
+        // Clear all Buffs on Game Over
+        this.buffManager.clearAllBuffs();
+        if (this.buffContainerEl) this.buffContainerEl.innerHTML = '';
 
         // Show buttons again
         if (this.pokedexSection) this.pokedexSection.classList.remove('hidden');
@@ -1255,6 +1409,73 @@ class Game {
                 this.recordBrokenTriggered = false; // Allow re-trigger if needed (though high score only breaks once usually)
             };
             this.marqueeText.addEventListener('animationend', onAnimationEnd);
+        }
+    }
+
+    /**
+     * 更新 Buff UI 顯示
+     */
+    updateBuffUI() {
+        if (!this.buffContainerEl) {
+            console.warn('Buff container element not found!');
+            return;
+        }
+
+        const currentTime = performance.now();
+        const activeBuffs = this.buffManager.getActiveBuffs();
+
+        console.log('updateBuffUI called, active buffs:', activeBuffs.size);
+
+        // 清空現有 UI
+        this.buffContainerEl.innerHTML = '';
+
+        // 為每個啟動的 Buff 建立 UI 元素
+        for (const [buffId, buffData] of activeBuffs.entries()) {
+            console.log('Creating UI for buff:', buffId, buffData.config.name);
+
+            const timeRemaining = this.buffManager.getBuffTimeRemaining(buffId, currentTime);
+            const secondsRemaining = Math.ceil(timeRemaining / 1000);
+
+            // 建立 Buff 項目
+            const buffItem = document.createElement('div');
+            buffItem.className = 'buff-item';
+            buffItem.dataset.buffId = buffId;
+
+            // 建立圖示
+            const buffImg = document.createElement('img');
+            // 從 legendaryImages 中找到對應的圖片
+            const pokemonId = parseInt(buffId);
+            const legendaryImg = this.legendaryImages.find(img => parseInt(img.dataset.id) === pokemonId);
+            if (legendaryImg) {
+                buffImg.src = legendaryImg.src;
+                buffImg.alt = buffData.config.name;
+                console.log('Buff image set:', legendaryImg.src);
+            } else {
+                console.warn('Legendary image not found for ID:', pokemonId);
+            }
+
+            // 建立資訊容器
+            const buffInfo = document.createElement('div');
+            buffInfo.className = 'buff-info';
+
+            // 建立名稱
+            const buffName = document.createElement('div');
+            buffName.className = 'buff-name';
+            buffName.textContent = buffData.config.name;
+
+            // 建立計時器
+            const buffTimer = document.createElement('div');
+            buffTimer.className = 'buff-timer';
+            buffTimer.textContent = `${secondsRemaining}秒`;
+
+            // 組裝元素
+            buffInfo.appendChild(buffName);
+            buffInfo.appendChild(buffTimer);
+            buffItem.appendChild(buffImg);
+            buffItem.appendChild(buffInfo);
+            this.buffContainerEl.appendChild(buffItem);
+
+            console.log('Buff UI element added to container');
         }
     }
 
