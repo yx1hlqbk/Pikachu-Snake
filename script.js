@@ -217,8 +217,10 @@ class Game {
         this.legendary = null; // New independent legendary state
 
         this.velocity = { x: 0, y: 0 };
+        this.velocity = { x: 0, y: 0 };
         this.nextVelocity = { x: 0, y: 0 };
         this.particles = [];
+        this.rainDrops = []; // Initialize here before spawnFood uses it
 
         // Enemy System
         this.enemy = new EnemySnake();
