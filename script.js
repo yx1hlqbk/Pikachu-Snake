@@ -1334,6 +1334,31 @@ class Game {
             });
             this.ctx.shadowBlur = 0;
         }
+
+        // Draw Active Buff Visuals (Overlay)
+        // Check for specific buffs that need full-screen effects
+        const activeBuffs = this.buffManager.getActiveBuffs();
+        for (const [buffType, buffData] of activeBuffs) {
+            if (buffData.config.type === 'MOVEMENT_BONUS') {
+                // Kyogre's Primordial Sea effect
+                this.ctx.save();
+                const gradient = this.ctx.createRadialGradient(
+                    this.canvas.width / 2, this.canvas.height / 2, this.canvas.width / 4,
+                    this.canvas.width / 2, this.canvas.height / 2, this.canvas.width / 1.2
+                );
+                gradient.addColorStop(0, 'rgba(0, 191, 255, 0)');
+                gradient.addColorStop(1, 'rgba(0, 191, 255, 0.4)');
+
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Add border effect
+                this.ctx.strokeStyle = 'rgba(0, 191, 255, 0.8)';
+                this.ctx.lineWidth = 15;
+                this.ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
+                this.ctx.restore();
+            }
+        }
     }
     gameLoop(currentTime) {
         if (!this.isRunning && this.particles.length === 0) return;
