@@ -274,6 +274,7 @@ class Game {
         this.buffManager = new BuffManager();
         // particles, rainDrops, magmaHazards initialized earlier
         this.buffContainerEl = document.getElementById('buff-container');
+        this.footerEl = document.getElementById('game-footer');
 
         this.initEventListeners();
         this.updateHighScoreUI();
@@ -335,6 +336,7 @@ class Game {
 
         // Hide pokedex section buttons during countdown
         if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
+        if (this.footerEl) this.footerEl.classList.add('hidden');
 
         // Hide all meowth timers during countdown
         if (this.meowthTimerEl) this.meowthTimerEl.classList.add('hidden');
@@ -439,6 +441,7 @@ class Game {
 
         // Hide buttons during game
         if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
+        if (this.footerEl) this.footerEl.classList.add('hidden');
 
         this.lastTime = performance.now();
         requestAnimationFrame((time) => this.gameLoop(time));
