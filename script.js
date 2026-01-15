@@ -410,7 +410,11 @@ class Game {
         this.enemyCooldown = 0;
         this.meowthSpawnTimer = 0;
         this.meowthSpawnPosition = null;
-        this.legendary = null; // Reset legendary
+        this.legendary = null;
+
+        // Initialize spawn target
+        this.legendarySpawnTarget = GAME_CONFIG.scoring.legendarySpawnScore;
+
         this.updateScoreUI();
         this.spawnFood();
         this.isRunning = true;
@@ -947,9 +951,8 @@ class Game {
     }
 
     trySpawnLegendary() {
-        // Condition: Score is multiple of SpawnScore (e.g., 100, 200...)
-        // And no legendary currently exists
-        if (this.#score > 0 && this.#score % GAME_CONFIG.scoring.legendarySpawnScore === 0 && !this.legendary) {
+        // Condition: Score reached target AND no legendary exists
+        if (this.#score >= this.legendarySpawnTarget && !this.legendary) {
             const enabledLegendaries = this.legendaryImages.filter(img => {
                 const id = parseInt(img.dataset.id);
                 return GAME_CONFIG.legendarySpawnRules[id] !== false;
@@ -992,6 +995,10 @@ class Game {
                     this.showMarquee("傳說寶可夢出現了！");
                 }
             }
+
+            // Should we update target here? No, user said update after it disappears.
+            // But if we don't, it will keep trying to spawn every frame?
+            // " && !this.legendary" prevents re-spawn while active.
         }
     }
 
@@ -1303,8 +1310,47 @@ class Game {
 
 
             this.spawnFood();
-        } else {
+            foodEatenThisFrame = true;
+        }
+
+        // Check Legendary Collision
+        if (this.legendary &&
+            head.x >= this.legendary.x && head.x < this.legendary.x + 2 &&
+            head.y >= this.legendary.y && head.y < this.legendary.y + 2) {
+
+            let points = GAME_CONFIG.scoring.legendaryFood;
+            let color = '#a600ff'; // Purple explosion
+
+            // Apply Score Multiplier Buff
+            const scoreMultiplier = this.buffManager.getMultiplier('SCORE_MULTIPLIER');
+            points *= scoreMultiplier;
+
+            this.#score += points;
+            this.updateScoreUI();
+
+            this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
+            this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
+
+            // Remove legendary and set next target
+            this.legendary = null;
+            this.legendarySpawnTarget = this.#score + GAME_CONFIG.scoring.legendarySpawnScore;
+            console.log('Legendary eaten. Next spawn at:', this.legendarySpawnTarget);
+            foodEatenThisFrame = true;
+        }
+
+        if (!foodEatenThisFrame) {
             this.snake.pop();
+        }
+
+        // Check Legendary Expiry
+        if (this.legendary) {
+            const timeLeft = this.legendary.lifetime - (Date.now() - this.legendary.spawnTime);
+            if (timeLeft <= 0) {
+                this.legendary = null; // Disappear
+                // Update target on disappearance
+                this.legendarySpawnTarget = this.#score + GAME_CONFIG.scoring.legendarySpawnScore;
+                console.log('Legendary expired. Next spawn at:', this.legendarySpawnTarget);
+            }
         }
     }
 
