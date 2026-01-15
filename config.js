@@ -56,8 +56,6 @@ const GAME_CONFIG = {
             type: 'SCORE_MULTIPLIER', // 分數加倍
             multiplier: 2,            // 2倍
             duration: 10000,          // 10秒
-            multiplier: 2,            // 2倍
-            duration: 10000,          // 10秒
             color: '#b0c4de'
         },
         250: { // 鳳王
@@ -76,7 +74,6 @@ const GAME_CONFIG = {
         151: true,  // 夢幻
 
         // Generation 2
-        249: true,  // 洛奇亞
         249: true,  // 洛奇亞
         250: true,  // 鳳王
 
