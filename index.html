@@ -89,108 +89,110 @@
                     <button id="home-btn" class="glow-button">回到首頁</button>
                 </div>
             </div>
+        </div>
 
-                        <div id="changelog-screen" class="overlay hidden">
-                <h2 class="glow-text" style="font-size: 2.5rem;">版本更新日誌</h2>
-                <div class="changelog-container" style="max-height: 60vh; overflow-y: auto; padding: 10px;">
-                    <div class="changelog-item">
-                        <div class="ver-tag">v1.2.6</div>
-                        <div class="ver-content">
-                            <h4>🛠️ 介面與體驗優化</h4>
-                            <ul>
-                                <li>✨ <strong>傳說能力說明</strong>：新增傳說 Buff 說明頁面，隨時查看特殊效果。</li>
-                                <li>🐛 <strong>問題修復</strong>：修正 Buff 圖示顯示異常與倒數計時器 Bug。</li>
-                                <li>📱 <strong>顯示優化</strong>：調整手機版介面配置，操作更順手。</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="changelog-item">
-                        <div class="ver-tag">v1.2.5</div>
-                        <div class="ver-content">
-                            <h4>✨ 傳說 Buff 系統登場</h4>
-                            <ul>
-                                <li>🟣 <strong>超夢</strong>：強大的念力場讓時間變慢（減速 50%）。</li>
-                                <li>🌸 <strong>夢幻</strong>：輕盈的身手讓移動更迅速（加速 50%）。</li>
-                                <li>📺 <strong>視覺優化</strong>：全新 Buff 狀態顯示，掌握能力剩餘時間。</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="changelog-item">
-                        <div class="ver-tag">v1.2.4</div>
-                        <div class="ver-content">
-                            <h4>⏳ 復活倒數機制</h4>
-                            <ul>
-                                <li>✨ 新增「喵喵復活倒數」：當喵喵被打敗後，畫面上方將顯示復活倒數計時！</li>
-                                <li>👀 戰況掌握：隨時掌握敵人動態，準備迎接下一波挑戰。</li>
-                            </ul>
-                        </div>
+        <div id="changelog-screen" class="overlay hidden">
+            <h2 class="glow-text" style="font-size: 2.5rem;">版本更新日誌</h2>
+            <div class="changelog-container" style="max-height: 60vh; overflow-y: auto; padding: 10px;">
+                <div class="changelog-item">
+                    <div class="ver-tag">v1.2.6</div>
+                    <div class="ver-content">
+                        <h4>🛠️ 介面與體驗優化</h4>
+                        <ul>
+                            <li>✨ <strong>傳說能力說明</strong>：新增傳說 Buff 說明頁面，隨時查看特殊效果。</li>
+                            <li>🐛 <strong>問題修復</strong>：修正 Buff 圖示顯示異常與倒數計時器 Bug。</li>
+                            <li>📱 <strong>顯示優化</strong>：調整手機版介面配置，操作更順手。</li>
+                        </ul>
                     </div>
                 </div>
-                <button id="close-changelog-btn" class="glow-button small" style="margin-top: 20px;">關閉</button>
-            </div>
-
-            <div id="leaderboard-screen" class="overlay hidden">
-                <h2 class="glow-text">🏆 排行榜</h2>
-                <div class="leaderboard-container">
-                    <ul id="main-leaderboard-list">
-                        <!-- Items will be injected here -->
-                    </ul>
+                <div class="changelog-item">
+                    <div class="ver-tag">v1.2.5</div>
+                    <div class="ver-content">
+                        <h4>✨ 傳說 Buff 系統登場</h4>
+                        <ul>
+                            <li>🟣 <strong>超夢</strong>：強大的念力場讓時間變慢（減速 50%）。</li>
+                            <li>🌸 <strong>夢幻</strong>：輕盈的身手讓移動更迅速（加速 50%）。</li>
+                            <li>📺 <strong>視覺優化</strong>：全新 Buff 狀態顯示，掌握能力剩餘時間。</li>
+                        </ul>
+                    </div>
                 </div>
-                <button id="close-leaderboard-btn" class="glow-button small">關閉</button>
-            </div>
-
-            <div id="buff-info-screen" class="overlay hidden">
-                <h2 class="glow-text">✨ 傳說能力</h2>
-                <div class="buff-info-list" id="buff-info-list">
-                    <!-- JS Generated Items -->
+                <div class="changelog-item">
+                    <div class="ver-tag">v1.2.4</div>
+                    <div class="ver-content">
+                        <h4>⏳ 復活倒數機制</h4>
+                        <ul>
+                            <li>✨ 新增「喵喵復活倒數」：當喵喵被打敗後，畫面上方將顯示復活倒數計時！</li>
+                            <li>👀 戰況掌握：隨時掌握敵人動態，準備迎接下一波挑戰。</li>
+                        </ul>
+                    </div>
                 </div>
-                <button id="close-buff-info-btn" class="glow-button small">關閉</button>
             </div>
-
-            <div id="marquee-container" class="marquee-container hidden">
-        <div id="marquee-text"></div>
-    </div>
-
-
-    <div class="pokedex-section">
-        <div class="button-row">
-            <button id="toggle-pokedex-btn" class="glow-button small">📖 查看圖鑑</button>
-            <button id="show-buff-info-btn" class="glow-button small">✨ 傳說能力</button>
-            <button id="show-leaderboard-btn" class="glow-button small">🏆 排行榜</button>
-            <button id="version-btn" class="glow-button small">📋 版本更新</button>
+            <button id="close-changelog-btn" class="glow-button small" style="margin-top: 20px;">關閉</button>
         </div>
-        <div id="pokedex-tabs" class="pokedex-tabs hidden">
-            <button class="tab-button active" data-category="all">全部</button>
-            <button class="tab-button" data-category="starters">一般寶可夢</button>
-            <button class="tab-button" data-category="legendaries">傳說寶可夢</button>
-        </div>
-        <div id="pokedex-grid" class="pokedex-grid hidden">
-            <!-- JS Generated Items -->
-        </div>
-    </div>
 
-    <footer class="game-footer">
-        <p class="author">作者: ian liao</p>
-        <div class="donation">
-            <p class="donate-text">✨ 喜歡這款遊戲？請作者喝杯咖啡,點亮創作熱情! ☕</p>
-            <!-- Wallet Address (Modified Structure) -->
-            <div class="wallet-address" id="copy-wallet"
-                style="cursor: pointer; display: inline-block; padding: 8px 15px; margin-top: 10px;"
-                title="點擊複製地址/開啟 TronScan">
-                <span
-                    onclick="window.open('https://tronscan.org/#/address/TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx', '_blank')">
-                    TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx <span class="chain-tag">(Tron)</span>
-                </span>
+        <div id="leaderboard-screen" class="overlay hidden">
+            <h2 class="glow-text">🏆 排行榜</h2>
+            <div class="leaderboard-container">
+                <ul id="main-leaderboard-list">
+                    <!-- Items will be injected here -->
+                </ul>
             </div>
+            <button id="close-leaderboard-btn" class="glow-button small">關閉</button>
+        </div>
 
+        <div id="buff-info-screen" class="overlay hidden">
+            <h2 class="glow-text">✨ 傳說能力</h2>
+            <div class="buff-info-list" id="buff-info-list">
+                <!-- JS Generated Items -->
+            </div>
+            <button id="close-buff-info-btn" class="glow-button small">關閉</button>
+        </div>
+
+        <div id="marquee-container" class="marquee-container hidden">
+            <div id="marquee-text"></div>
+        </div>
+
+
+        <div class="pokedex-section">
+            <div class="button-row">
+                <button id="toggle-pokedex-btn" class="glow-button small">📖 查看圖鑑</button>
+                <button id="show-buff-info-btn" class="glow-button small">✨ 傳說能力</button>
+                <button id="show-leaderboard-btn" class="glow-button small">🏆 排行榜</button>
+                <button id="version-btn" class="glow-button small">📋 版本更新</button>
+            </div>
+            <div id="pokedex-tabs" class="pokedex-tabs hidden">
+                <button class="tab-button active" data-category="all">全部</button>
+                <button class="tab-button" data-category="starters">一般寶可夢</button>
+                <button class="tab-button" data-category="legendaries">傳說寶可夢</button>
+            </div>
+            <div id="pokedex-grid" class="pokedex-grid hidden">
+                <!-- JS Generated Items -->
+            </div>
+        </div>
+
+        <footer class="game-footer">
+            <p class="author">作者: ian liao</p>
+            <div class="donation">
+                <p class="donate-text">✨ 喜歡這款遊戲？請作者喝杯咖啡,點亮創作熱情! ☕</p>
+                <!-- Wallet Address (Modified Structure) -->
+                <div class="wallet-address" id="copy-wallet"
+                    style="cursor: pointer; display: inline-block; padding: 8px 15px; margin-top: 10px;"
+                    title="點擊複製地址/開啟 TronScan">
+                    <span
+                        onclick="window.open('https://tronscan.org/#/address/TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx', '_blank')">
+                        TFxdSLG93t1Rs37PtyauqRM4P4P4UvesCx <span class="chain-tag">(Tron)</span>
+                    </span>
+                </div>
+            </div>
             <div style="margin-top: 15px; color: #666; font-size: 12px; letter-spacing: 2px;">
                 Ver 1.2.6
             </div>
-        </div>
-        <script src="config.js?v=1.3.1"></script>
-        <script src="assets/clean_manifest.js?v=1.3.1"></script>
-        <script src="BuffManager.js?v=1.3.1"></script>
-        <script src="script.js?v=1.3.1"></script>
+        </footer>
+    </div>
+    <script src="config.js?v=1.3.1"></script>
+    <script src="assets/clean_manifest.js?v=1.3.1"></script>
+    <script src="BuffManager.js?v=1.3.1"></script>
+    <script src="script.js?v=1.3.1"></script>
 </body>
 
 </html>
