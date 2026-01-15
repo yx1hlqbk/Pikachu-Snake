@@ -724,6 +724,8 @@ class Game {
                 desc = `憑藉著輕盈的身手，讓你的移動速度<strong>提升 ${(config.multiplier - 1) * 100}%</strong>，持續 ${config.duration / 1000} 秒。`;
             } else if (config.type === 'SCORE_MULTIPLIER') {
                 desc = `傳說的氣場籠罩，獲得的分數<strong>變為 ${config.multiplier} 倍</strong>，持續 ${config.duration / 1000} 秒。`;
+            } else if (config.type === 'MEOWTH_INVINCIBLE') {
+                desc = `鳳凰的神聖火焰保護著你，<strong>碰到喵喵不會扣分</strong>，持續 ${config.duration / 1000} 秒。`;
             }
 
             item.innerHTML = `
@@ -1114,11 +1116,21 @@ class Game {
             const hitPlayer = this.snake.slice(1).some(part => part.x === enemyHead.x && part.y === enemyHead.y);
 
             if (hitEnemy || hitPlayer) {
-                this.#score = Math.max(0, this.#score - GAME_CONFIG.enemy.penaltyScore);
-                this.updateScoreUI();
+                // Check for MEOWTH_INVINCIBLE buff
+                const isInvincible = Array.from(this.buffManager.getActiveBuffs().values())
+                    .some(buff => buff.config.type === 'MEOWTH_INVINCIBLE');
 
-                // Visual feedback
-                this.createExplosion(playerHead.x * this.gridSize + 10, playerHead.y * this.gridSize + 10, '#ff0000');
+                if (isInvincible) {
+                    // Visual feedback for invincibility (e.g., Gold/Orange sparks)
+                    this.createExplosion(playerHead.x * this.gridSize + 10, playerHead.y * this.gridSize + 10, '#ffcc00');
+                    console.log("Invincible! No score penalty.");
+                } else {
+                    this.#score = Math.max(0, this.#score - GAME_CONFIG.enemy.penaltyScore);
+                    this.updateScoreUI();
+
+                    // Visual feedback
+                    this.createExplosion(playerHead.x * this.gridSize + 10, playerHead.y * this.gridSize + 10, '#ff0000');
+                }
 
                 // Reset Enemy
                 this.enemy.active = false;

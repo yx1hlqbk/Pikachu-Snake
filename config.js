@@ -56,7 +56,16 @@ const GAME_CONFIG = {
             type: 'SCORE_MULTIPLIER', // 分數加倍
             multiplier: 2,            // 2倍
             duration: 10000,          // 10秒
+            multiplier: 2,            // 2倍
+            duration: 10000,          // 10秒
             color: '#b0c4de'
+        },
+        250: { // 鳳王
+            name: '鳳王',
+            type: 'MEOWTH_INVINCIBLE', // 喵喵無敵
+            multiplier: 1,             // 碰撞不扣分
+            duration: 10000,           // 10秒
+            color: '#ff4500'
         }
     },
 
@@ -68,7 +77,8 @@ const GAME_CONFIG = {
 
         // Generation 2
         249: true,  // 洛奇亞
-        250: false,  // 鳳王
+        249: true,  // 洛奇亞
+        250: true,  // 鳳王
 
         // Generation 3
         382: false,  // 蓋歐卡

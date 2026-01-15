@@ -60,7 +60,8 @@ window.ASSET_MANIFEST = {
 
         // Generation 2
         { id: 249, name: "洛奇亞", src: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/249.png' },
-        { id: 250, name: "鳳王", src: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/250.png' },
+        { id: 249, name: "洛奇亞", src: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/249.png' },
+        { id: 250, name: "鳳王", src: 'assets/sprites/ho_oh.png' },
 
         // Generation 3
         { id: 382, name: "蓋歐卡", src: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/382.png' },
