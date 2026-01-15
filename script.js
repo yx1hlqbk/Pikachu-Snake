@@ -581,6 +581,12 @@ class Game {
         const pokedexScreen = document.getElementById('pokedex-screen');
         const closePokedexBtn = document.getElementById('close-pokedex-btn');
 
+        // Pokedex Toggle
+        const toggleBtn = document.getElementById('toggle-pokedex-btn');
+        const pokedexScreen = document.getElementById('pokedex-screen');
+        const closePokedexBtn = document.getElementById('close-pokedex-btn');
+        const closePokedexX = document.getElementById('close-pokedex-x');
+
         if (toggleBtn && pokedexScreen) {
             toggleBtn.addEventListener('click', () => {
                 const isHidden = pokedexScreen.classList.contains('hidden');
@@ -593,13 +599,17 @@ class Game {
                 }
             });
 
-            if (closePokedexBtn) {
-                closePokedexBtn.addEventListener('click', () => {
-                    pokedexScreen.classList.add('hidden');
-                    pokedexScreen.classList.remove('active');
-                });
-            }
+            const closePokedex = () => {
+                pokedexScreen.classList.add('hidden');
+                pokedexScreen.classList.remove('active');
+            };
+
+            if (closePokedexBtn) closePokedexBtn.addEventListener('click', closePokedex);
+            if (closePokedexX) closePokedexX.addEventListener('click', closePokedex);
         }
+
+        // Pokedex Tabs
+
 
         // Pokedex Tabs
         if (this.pokedexTabs) {
