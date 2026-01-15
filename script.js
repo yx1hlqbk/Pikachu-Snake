@@ -320,11 +320,14 @@ class Game {
 
     startGameFromDialog() {
         // Hide instructions dialog
-        const instructionsDialog = document.getElementById('instructions-dialog');
         if (instructionsDialog) {
             instructionsDialog.classList.add('hidden');
             instructionsDialog.classList.remove('active');
         }
+
+        // Show buttons/footer again (remove invisible)
+        if (this.pokedexSection) this.pokedexSection.classList.remove('invisible');
+        if (this.footerEl) this.footerEl.classList.remove('invisible');
 
         // Show countdown
         this.showCountdown();
