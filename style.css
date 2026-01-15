@@ -622,6 +622,8 @@ canvas {
     font-size: 1.1rem;
     /* Increased size */
     margin-top: 15px;
+    position: relative;
+    z-index: 30;
 }
 
 .author {
@@ -678,6 +680,8 @@ canvas {
     max-width: 600px;
     margin: 10px 0;
     text-align: center;
+    position: relative;
+    z-index: 30;
 }
 
 #toggle-pokedex-btn,
