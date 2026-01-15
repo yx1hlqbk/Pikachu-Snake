@@ -304,6 +304,8 @@ class Game {
 
         // Hide pokedex section buttons when showing instructions
         if (this.pokedexSection) this.pokedexSection.classList.add('hidden');
+        // Also hide footer as requested
+        if (this.footerEl) this.footerEl.classList.add('hidden');
 
         // Hide start screen, show instructions dialog
         this.startScreen.classList.add('hidden');

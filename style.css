@@ -376,6 +376,24 @@ canvas {
     display: flex;
     flex-direction: column;
     /* 置中對齊 */
+    position: relative;
+    /* For close button positioning */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: var(--primary-color);
 }
 
 .dialog-content h2 {
@@ -430,6 +448,9 @@ canvas {
     color: var(--primary-color);
     text-shadow: 0 0 40px var(--primary-color), 0 0 80px var(--primary-color);
     animation: countdown-pulse 1s ease-in-out;
+    margin-top: -20vh;
+    /* Move it up significantly */
+}
 }
 
 @keyframes countdown-pulse {
