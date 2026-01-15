@@ -36,6 +36,28 @@ body {
     /* Add top/bottom padding */
 }
 
+@media (max-width: 768px) {
+    body {
+        padding: 5px 0;
+        /* Reduce padding on mobile */
+        align-items: flex-start;
+        /* Ensure top alignment */
+    }
+
+    .game-container {
+        padding: 10px;
+        /* Reduce container padding */
+        gap: 10px;
+        /* Reduce gap between elements */
+    }
+
+    .game-header {
+        padding: 10px 15px;
+        /* Compact header */
+        margin-bottom: 5px;
+    }
+}
+
 /* Background Effects */
 .background-glob {
     position: absolute;
@@ -1318,8 +1340,8 @@ canvas {
     /* Take full width */
     height: 80px;
     /* Fixed height to create the "box" area user visualized */
-    margin-top: 20px;
-    /* Space from canvas */
+    margin-top: 0;
+    /* Removed extra margin as per user request to close gap */
 
     /* Optional: Add background to visualize the "red box" area during debug, or transparent */
     /* border: 1px solid rgba(255, 0, 0, 0.3); */
@@ -1426,8 +1448,9 @@ canvas {
     }
 }
 
-.meowth-spawn-alert.hidden {
-    display: none;
+/* Utility Classes */
+.hidden {
+    display: none !important;
 }
 
 /* Copy Notification Animations */
