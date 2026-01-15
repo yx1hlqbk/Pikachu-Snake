@@ -12,6 +12,7 @@
 - 🔊 **音效系統** - 皮卡丘與傳說寶可夢專屬音效
 - 😼 **追擊挑戰** - 喵喵敵人會在達到 100 分後出現追擊
 - 🛡️ **無敵機制** - 透過鳳王 Buff 獲得短暫的無敵狀態
+- 💧 **始源之雨** - 透過蓋歐卡 Buff 收集地圖上的能量水滴得分
 - ⏱️ **戰術預警** - 喵喵出現與復活前會有倒數與位置提示
 - 🏆 **排行榜系統** - 記錄最高分與玩家排名
 - 📖 **寶可夢圖鑑** - 完整的寶可夢收藏展示
@@ -70,15 +71,18 @@ Pikachu-Snake/
 ├── config.js               # 遊戲設定
 ├── server.py               # Python 伺服器
 ├── assets/
-│   ├── sprites/            # 遊戲圖片資源
-│   │   ├── pikachu_final.png
-│   │   ├── pikachu_walking.gif
-│   │   └── meowth.png
+│   ├── pokemon/            # 寶可夢圖片資源
+│   │   ├── pikachu.png
+│   │   ├── meowth.png
+│   │   └── {id}.png
 │   ├── audio/              # 音效檔案
 │   │   └── pikachu.mp3
-│   └── clean_manifest.js   # 資源清單
+│   ├── clean_manifest.js   # 資源清單
+│   └── pikachu_walking.gif # 皮卡丘走路動畫
 └── scripts/
-    └── gen_pixel_art.py    # 像素藝術生成工具
+    ├── gen_pixel_art.py    # 像素藝術生成工具
+    ├── download_assets.py  # 資源下載工具
+    └── clear_db.py         # 資料庫清理工具
 ```
 
 ## 🎨 技術特點
@@ -105,6 +109,11 @@ const GAME_CONFIG = {
 ```
 
 ## 📝 版本歷程
+
+### v1.3.1 - 始源之雨
+- 🐋 新增傳說寶可夢「蓋歐卡」
+- 💧 新增「始源之雨」機制 (收集水滴得分)
+- 🎨 更新全系列寶可夢官方美術圖
 
 ### v1.3.0 - 鳳王降臨
 - 🔥 新增傳說寶可夢「鳳王」
