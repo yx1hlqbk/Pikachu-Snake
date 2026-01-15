@@ -167,6 +167,14 @@ canvas {
     /* Ensure it doesn't block clicks even if pointer-events fails in some browsers (unlikely but safe) and good for a11y */
 }
 
+/* Modal Overlays (Leaderboard, Changelog, Buff Info) should be above the buttons */
+#changelog-screen,
+#leaderboard-screen,
+#buff-info-screen,
+#instructions-dialog {
+    z-index: 50;
+}
+
 .pokedex-section.hidden {
     display: none;
 }
