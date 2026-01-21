@@ -662,6 +662,7 @@ class Game {
         const versionBtn = document.getElementById('version-btn');
         const changelogScreen = document.getElementById('changelog-screen');
         const closeChangelogBtn = document.getElementById('close-changelog-btn');
+        const closeChangelogX = document.getElementById('close-changelog-x');
 
         if (versionBtn && changelogScreen && closeChangelogBtn) {
             versionBtn.addEventListener('click', () => {
@@ -670,11 +671,13 @@ class Game {
                 changelogScreen.classList.add('active');
             });
 
-            closeChangelogBtn.addEventListener('click', () => {
-                changelogScreen.classList.remove('active');
+            const closeChangelog = () => {
                 changelogScreen.classList.remove('active');
                 changelogScreen.classList.add('hidden');
-            });
+            };
+
+            closeChangelogBtn.addEventListener('click', closeChangelog);
+            if (closeChangelogX) closeChangelogX.addEventListener('click', closeChangelog);
         }
 
         // Initialize Buff Info Button
@@ -683,6 +686,7 @@ class Game {
         // Leaderboard Toggle
         const showLeaderboardBtn = document.getElementById('show-leaderboard-btn');
         const closeLeaderboardBtn = document.getElementById('close-leaderboard-btn');
+        const closeLeaderboardX = document.getElementById('close-leaderboard-x');
 
         if (showLeaderboardBtn) {
             showLeaderboardBtn.addEventListener('click', () => {
@@ -694,14 +698,15 @@ class Game {
             });
         }
 
-        if (closeLeaderboardBtn) {
-            closeLeaderboardBtn.addEventListener('click', () => {
-                if (this.leaderboardScreen) {
-                    this.leaderboardScreen.classList.add('hidden');
-                    this.leaderboardScreen.classList.remove('active');
-                }
-            });
-        }
+        const closeLeaderboard = () => {
+            if (this.leaderboardScreen) {
+                this.leaderboardScreen.classList.add('hidden');
+                this.leaderboardScreen.classList.remove('active');
+            }
+        };
+
+        if (closeLeaderboardBtn) closeLeaderboardBtn.addEventListener('click', closeLeaderboard);
+        if (closeLeaderboardX) closeLeaderboardX.addEventListener('click', closeLeaderboard);
 
         // Wallet Address Copy Functionality
         const copyWalletBtn = document.getElementById('copy-wallet');
@@ -743,6 +748,7 @@ class Game {
         const buffInfoBtn = document.getElementById('show-buff-info-btn');
         const buffInfoScreen = document.getElementById('buff-info-screen');
         const closeBuffInfoBtn = document.getElementById('close-buff-info-btn');
+        const closeBuffX = document.getElementById('close-buff-x');
         const buffInfoList = document.getElementById('buff-info-list');
 
         if (buffInfoBtn && buffInfoScreen && closeBuffInfoBtn && buffInfoList) {
@@ -753,10 +759,13 @@ class Game {
                 buffInfoScreen.classList.add('active');
             });
 
-            closeBuffInfoBtn.addEventListener('click', () => {
+            const closeBuffInfo = () => {
                 buffInfoScreen.classList.remove('active');
                 buffInfoScreen.classList.add('hidden');
-            });
+            };
+
+            closeBuffInfoBtn.addEventListener('click', closeBuffInfo);
+            if (closeBuffX) closeBuffX.addEventListener('click', closeBuffInfo);
         }
     }
 
@@ -788,6 +797,8 @@ class Game {
                 desc = `蓋歐卡喚來始源之海，<strong>每移動一步獲得 ${config.scorePerStep} 分</strong>，持續 ${config.duration / 1000} 秒。`;
             } else if (config.type === 'KYOGRE_RAIN') {
                 desc = `蓋歐卡喚來始源之雨，地圖將出現<strong>能量水滴</strong>，收集每個獲得 <strong>${config.scorePerItem} 分</strong>！`;
+            } else if (config.type === 'GROUDON_HAZARD') {
+                desc = `固拉多施展斷崖之劍，地圖將產生<strong>${config.count} 個岩漿地形</strong>，碰到會<strong>扣除 ${config.penalty} 分</strong>，持續 ${config.duration / 1000} 秒！`;
             }
 
             item.innerHTML = `

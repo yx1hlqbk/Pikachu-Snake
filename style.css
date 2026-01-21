@@ -745,8 +745,9 @@ canvas {
 
 #toggle-pokedex-btn,
 #version-btn,
-#show-leaderboard-btn {
-    padding: 8px 20px;
+#show-leaderboard-btn,
+#show-buff-info-btn {
+    padding: 8px 10px;
     font-size: 0.9rem;
     margin-bottom: 10px;
     background: transparent;
@@ -754,11 +755,19 @@ canvas {
     box-shadow: none;
     color: #fff;
     /* White text */
+    flex: 1;
+    min-width: 100px;
+    /* Ensure they don't get too small before wrapping */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }
 
 #toggle-pokedex-btn:hover,
 #version-btn:hover,
-#show-leaderboard-btn:hover {
+#show-leaderboard-btn:hover,
+#show-buff-info-btn:hover {
     background: rgba(0, 243, 255, 0.1);
     box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
@@ -1042,10 +1051,13 @@ canvas {
 
     #toggle-pokedex-btn,
     #version-btn,
-    #show-leaderboard-btn {
-        padding: 10px 16px;
+    #show-leaderboard-btn,
+    #show-buff-info-btn {
+        padding: 10px 5px;
         font-size: 0.85rem;
         margin-bottom: 0;
+        flex: 1;
+        /* For mobile too */
     }
 
     /* Instructions Dialog Mobile Fixes */
