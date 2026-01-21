@@ -36,6 +36,8 @@
 
 ### 線上遊玩 (GitHub Pages)
 
+🎮 **[點擊這裡開始遊玩](https://yx1hlqbk.github.io/Pikachu-Snake/)** 🎮
+
 直接訪問 GitHub Pages 部署版本即可開始遊玩!
 
 > **注意**: GitHub Pages 版本的排行榜資料僅儲存在您的瀏覽器本機 (localStorage),清除瀏覽器資料會導致排行榜遺失。
