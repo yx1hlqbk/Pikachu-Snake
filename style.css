@@ -1467,10 +1467,6 @@ canvas {
         /* Slightly smaller margin on mobile */
     }
 
-    .buff-item {
-        /* 不需要額外覆寫，使用主樣式即可 */
-    }
-
     .buff-item img {
         width: 32px;
         height: 32px;
@@ -1630,4 +1626,23 @@ canvas {
     margin-right: 5px;
     vertical-align: middle;
     line-height: 1;
+}
+
+/* Storage Mode Notice */
+.storage-notice {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    color: #ffc107;
+    font-size: 12px;
+    text-align: center;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.storage-notice.hidden {
+    display: none;
 }

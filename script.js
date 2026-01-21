@@ -284,6 +284,16 @@ class Game {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    // 環境偵測:判斷是否在 GitHub Pages 環境
+    isGitHubPages() {
+        // GitHub Pages: hostname 包含 'github.io'
+        // 本地開發 (file://): hostname 為空字串
+        // 本地伺服器: hostname 為 'localhost' 且 port 為 5500
+        return window.location.hostname.includes('github.io') ||
+            window.location.hostname === '' ||
+            (window.location.hostname === 'localhost' && window.location.port !== '5500');
+    }
+
     resizeCanvas() {
         this.canvas.width = 600;
         this.canvas.height = 600;
@@ -508,7 +518,14 @@ class Game {
     }
 
     initEventListeners() {
-        document.addEventListener('keydown', (e) => this.handleInput(e));
+        // 全局阻止方向鍵的預設滾動行為
+        document.addEventListener('keydown', (e) => {
+            // 防止方向鍵觸發頁面滾動(無論遊戲是否運行)
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+            }
+            this.handleInput(e);
+        });
 
         // Show instructions dialog when clicking start
         document.getElementById('start-btn').addEventListener('click', () => this.showInstructionsDialog());
@@ -1674,31 +1691,12 @@ class Game {
     }
 
     async updateLeaderboard(score) {
-        try {
-            await fetch('/api/score', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: this.playerName,
-                    score: score
-                })
-            });
-            await this.loadLeaderboard();
-        } catch (e) {
-            console.error("Failed to update score", e);
-        }
-    }
-
-    async loadLeaderboard() {
-        try {
-            const res = await fetch('/api/leaderboard');
-            const data = await res.json();
-            this.leaderboard = data;
+        if (this.isGitHubPages()) {
+            // GitHub Pages 模式: 使用 localStorage
+            this.leaderboard = this.saveLeaderboardToLocalStorage(this.playerName, score);
             this.renderLeaderboard();
 
-            // Update High Score Display to be the top score on server
+            // 更新最高分
             if (this.leaderboard.length > 0) {
                 const topScore = this.leaderboard[0].score;
                 if (topScore > this.highScore) {
@@ -1706,8 +1704,106 @@ class Game {
                     this.updateHighScoreUI();
                 }
             }
-        } catch (e) {
-            console.error("Failed to load leaderboard", e);
+        } else {
+            // 本地伺服器模式: 使用後端 API
+            try {
+                await fetch('/api/score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: this.playerName,
+                        score: score
+                    })
+                });
+                await this.loadLeaderboard();
+            } catch (e) {
+                console.error("Failed to update score", e);
+            }
+        }
+    }
+
+    async loadLeaderboard() {
+        if (this.isGitHubPages()) {
+            // GitHub Pages 模式: 從 localStorage 讀取
+            this.leaderboard = this.loadLeaderboardFromLocalStorage();
+            this.renderLeaderboard();
+
+            // 更新最高分顯示
+            if (this.leaderboard.length > 0) {
+                const topScore = this.leaderboard[0].score;
+                if (topScore > this.highScore) {
+                    this.highScore = topScore;
+                    this.updateHighScoreUI();
+                }
+            }
+
+            // 顯示 GitHub Pages 模式提示
+            this.showStorageModeNotice();
+        } else {
+            // 本地伺服器模式: 從後端 API 讀取
+            try {
+                const res = await fetch('/api/leaderboard');
+                const data = await res.json();
+                this.leaderboard = data;
+                this.renderLeaderboard();
+
+                // Update High Score Display to be the top score on server
+                if (this.leaderboard.length > 0) {
+                    const topScore = this.leaderboard[0].score;
+                    if (topScore > this.highScore) {
+                        this.highScore = topScore;
+                        this.updateHighScoreUI();
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load leaderboard", e);
+            }
+        }
+    }
+
+    // 從 localStorage 讀取排行榜
+    loadLeaderboardFromLocalStorage() {
+        const data = localStorage.getItem('snakeLeaderboard');
+        return data ? JSON.parse(data) : [];
+    }
+
+    // 儲存排行榜到 localStorage
+    saveLeaderboardToLocalStorage(name, score) {
+        let leaderboard = this.loadLeaderboardFromLocalStorage();
+
+        // 尋找是否已有該玩家
+        const existingIndex = leaderboard.findIndex(entry => entry.name === name);
+
+        if (existingIndex !== -1) {
+            // 更新現有玩家分數(僅在更高時)
+            if (score > leaderboard[existingIndex].score) {
+                leaderboard[existingIndex].score = score;
+                leaderboard[existingIndex].date = Date.now();
+            }
+        } else {
+            // 新增玩家
+            leaderboard.push({
+                name: name,
+                score: score,
+                date: Date.now()
+            });
+        }
+
+        // 排序並保留前 10 名
+        leaderboard.sort((a, b) => b.score - a.score);
+        leaderboard = leaderboard.slice(0, 10);
+
+        localStorage.setItem('snakeLeaderboard', JSON.stringify(leaderboard));
+        return leaderboard;
+    }
+
+    // 顯示儲存模式提示
+    showStorageModeNotice() {
+        const noticeEl = document.getElementById('storage-mode-notice');
+        if (noticeEl) {
+            noticeEl.classList.remove('hidden');
         }
     }
 
