@@ -855,6 +855,9 @@ class Game {
         const grid = document.getElementById('pokedex-grid');
         if (!grid) return;
 
+        // Ensure grid is visible (users reported it missing after game over)
+        grid.classList.remove('hidden');
+
         // 清空現有內容以支援重新渲染
         grid.innerHTML = '';
 
