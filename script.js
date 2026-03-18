@@ -906,7 +906,7 @@ class Game {
                 instructionEl.innerText = "滑動螢幕控制方向";
                 if (gestureHintEl) gestureHintEl.classList.remove('hidden');
             } else {
-                instructionEl.innerText = "使用方向鍵移動";
+                instructionEl.innerText = "使用方向鍵或 WASD 移動";
                 if (gestureHintEl) gestureHintEl.classList.add('hidden');
             }
         }
@@ -917,7 +917,7 @@ class Game {
         if (!list) return;
 
         list.innerHTML = `
-            <p>🎮 使用方向鍵或滑動螢幕控制皮卡丘移動</p>
+            <p>🎮 使用方向鍵或 WASD 或滑動螢幕控制皮卡丘移動</p>
             <p>🍎 吃普通寶可夢得 <span class="highlight">${GAME_CONFIG.scoring.normalFood} 分</span></p>
             <p>⭐ 每 ${GAME_CONFIG.scoring.legendarySpawnScore} 分出現傳說寶可夢，吃掉得 <span class="highlight">${GAME_CONFIG.scoring.legendaryFood} 分</span></p>
             <p>😼 達到 ${GAME_CONFIG.enemy.spawnScore} 分後，喵喵會出現追擊你！</p>
@@ -932,15 +932,23 @@ class Game {
 
         switch (e.key) {
             case 'ArrowUp':
+            case 'w':
+            case 'W':
                 this.changeDirection(0, -1);
                 break;
             case 'ArrowDown':
+            case 's':
+            case 'S':
                 this.changeDirection(0, 1);
                 break;
             case 'ArrowLeft':
+            case 'a':
+            case 'A':
                 this.changeDirection(-1, 0);
                 break;
             case 'ArrowRight':
+            case 'd':
+            case 'D':
                 this.changeDirection(1, 0);
                 break;
         }
@@ -1412,8 +1420,9 @@ class Game {
             this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
             this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
 
-            // Check High Score Marquee removed from here
-
+            // Play eat sound
+            this.eatSound.currentTime = 0;
+            this.eatSound.play().catch(e => console.warn('Failed to play eat sound:', e));
 
             this.spawnFood();
             this.trySpawnLegendary(); // Added missing call
@@ -1438,18 +1447,17 @@ class Game {
             this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
             this.createExplosion(head.x * this.gridSize + 10, head.y * this.gridSize + 10, color);
 
-            // Activate Legendary Buff
+            // Activate Legendary Buff and play cry
             const lImg = this.legendaryImages[this.legendary.legendaryIndex];
             if (lImg && lImg.dataset.id) {
                 const buffId = parseInt(lImg.dataset.id);
                 this.buffManager.activateBuff(buffId);
-                console.log(`Activated buff for ID: ${buffId}`);
+                this.playLegendaryCry(buffId);
             }
 
             // Remove legendary and set next target
             this.legendary = null;
             this.legendarySpawnTarget = this.#score + GAME_CONFIG.scoring.legendarySpawnScore;
-            console.log('Legendary eaten. Next spawn at:', this.legendarySpawnTarget);
             foodEatenThisFrame = true;
         }
 
